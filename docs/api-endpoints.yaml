@@ -1,0 +1,201 @@
+openapi: 3.0.0
+info:
+  version: 0.0.1
+  title: GeoVenture API
+  description: An API for managing users and games with GeoVenture.
+
+tags:
+  - name: users
+    description: Operations about user
+  - name: games
+    description: Everything about your Games
+
+paths:
+  /users:
+    get:
+      tags: 
+        - users
+      summary: Get all users
+      responses:
+        '200':
+          description: OK
+
+    post:
+      tags: 
+        - users
+      summary: Create a new user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        '201':
+          description: Created
+
+  /users/{userId}:
+    get:
+      tags: 
+        - users
+      summary: Get a user by ID
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+
+    put:
+      tags: 
+        - games
+      summary: Update a user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                username:
+                  type: string
+              required:
+                - username
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+
+    delete:
+      tags: 
+        - users
+      summary: Delete a user
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: integer
+          description: ID of the user
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
+
+  /games:
+    get:
+      tags: 
+        - games
+      summary: Get all games
+      responses:
+        '200':
+          description: OK
+
+    post:
+      tags: 
+        - games
+      summary: Create a new game where the backend will save the Unix time of the request as the initial time of the game.
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId:
+                  type: integer
+                  description: ID of the user associated with the game
+              required:
+                - userId
+      responses:
+        '201':
+          description: Created
+
+  /games/{gameId}:
+    get:
+      tags: 
+        - games
+      summary: Get a game by ID
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: integer
+          description: ID of the game
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+
+    patch:
+      tags: 
+        - games
+      summary: Update a game where the backend should save the guessed location input from the user as the end location of the game round.
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: integer
+          description: ID of the game
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema: # Same schema as for creating a game
+              type: object
+              properties:
+                guessedLocation:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                  description: End location of the game round
+              required:
+                - guessedLocation
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+
+    delete:
+      tags: 
+        - games
+      summary: Delete a game
+      parameters:
+        - in: path
+          name: gameId
+          required: true
+          schema:
+            type: integer
+          description: ID of the game
+      responses:
+        '204':
+          description: No Content
+        '404':
+          description: Not Found
