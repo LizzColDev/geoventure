@@ -7,6 +7,7 @@ const express_1 = __importDefault(require("express"));
 const indexRouter = express_1.default.Router();
 /* GET home page. */
 indexRouter.get('/', function (req, res) {
-    res.render('index', { title: 'Express' });
+    res.send('Express + TypeScript Server');
+    ;
 });
 exports.default = indexRouter;

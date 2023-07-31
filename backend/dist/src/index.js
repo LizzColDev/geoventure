@@ -11,7 +11,7 @@ const port = process.env.PORT || 3000;
 app.use(express_1.default.json());
 app.use('/', routes_1.default);
 app.use('/users', users_1.default);
-app.get('/', (req, res) => {
-    res.send('Express + TypeScript Server');
+app.listen(port, () => {
+    console.log(`Server is running on port ${port}`);
 });
 exports.default = app;
