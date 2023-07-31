@@ -3,7 +3,7 @@
 
 # Ignore build output directories
 /build
-/dist
+**/dist
 
 # Ignore environment files (these should not be committed)
 .env
