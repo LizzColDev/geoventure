@@ -4,6 +4,7 @@
 # Ignore build output directories
 /build
 **/dist
+**/coverage
 
 # Ignore environment files (these should not be committed)
 .env
@@ -46,3 +47,5 @@ firebase-adminsdk*.json
 # Ignore database cache and temporary files
 .cache/
 firebase-debug.log
+
+key.json
