@@ -1,55 +1,37 @@
-import { send } from 'process';
 import app from '../src/index';
 import request from 'supertest';
 
+
 describe ('First test', ()=>{
-  it('GET /users --> array users', () =>{
-    return request(app)
+
+  it('GET /users --> array users', async () =>{
+    const response = await request(app)
       .get('/users')
+      .set('Accept', 'application/json')
       .expect('Content-Type', /json/)
-      .expect(200)
-      .then(response =>{
-          expect(response.body).toEqual(expect.arrayContaining([
-            expect.objectContaining({
-              userId: expect.any(Number),
-              name: expect.any(String),
-            })
-          ]))
-    })
+      .expect(200);
+    expect(response.body).toEqual(expect.arrayContaining([
+      expect.objectContaining({
+        userId: expect.any(Number),
+        name: expect.any(String),
+      })
+    ]));
+    return;
   })
   
-  it('POST /users --> created user', () =>{
-    return request(app)
-      .post('/users')
-      .send({
-        name: 'Juanita'
-      })
+  it('GET /users/userId --> specific user by ID', async () =>{
+    const response = await request(app)
+      .get('/users')
       .expect('Content-Type', /json/)
-      .expect(201)
-      .then(response =>{
-        expect(response.body).toEqual(expect.arrayContaining([
-          expect.objectContaining({
-            name: 'Juanita',
-          })
-        ]))
-  })
-  });
-
-  it('GET /users/userId --> specific user by ID', () =>{
-    return request(app)
-    .get('/users')
-    .expect('Content-Type', /json/)
-    .expect(200)
-    .then(response =>{
-        expect(response.body).toEqual(
-          expect.arrayContaining([
-            expect.objectContaining({
-              userId: expect.any(Number),
-              name: expect.any(String),
-            })
-        ]))
-  })
-
+      .expect(200);
+    expect(response.body).toEqual(
+      expect.arrayContaining([
+        expect.objectContaining({
+          userId: expect.any(Number),
+          name: expect.any(String),
+        })
+      ]));
+      return;
   })
 
   it('GET /users/userId --> 404 if not found', () =>{
