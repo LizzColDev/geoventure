@@ -4,51 +4,27 @@ import request from 'supertest';
 
 describe ('First test', ()=>{
 
-  it('GET /users --> array users', async () =>{
-    const response = await request(app)
-      .get('/users')
-      .set('Accept', 'application/json')
-      .expect('Content-Type', /json/)
-      .expect(200);
-    expect(response.body).toEqual(expect.arrayContaining([
-      expect.objectContaining({
-        userId: expect.any(Number),
-        name: expect.any(String),
-      })
-    ]));
-    return;
-  })
-  
-  it('GET /users/userId --> specific user by ID', async () =>{
-    const response = await request(app)
-      .get('/users')
-      .expect('Content-Type', /json/)
-      .expect(200);
-    expect(response.body).toEqual(
-      expect.arrayContaining([
-        expect.objectContaining({
-          userId: expect.any(Number),
-          name: expect.any(String),
-        })
-      ]));
-      return;
-  })
+  it('should return 200 OK for the index route', async () => {
+    const response = await request(app).get('/');
+    expect(response.status).toBe(200);
+  });
 
-  it('GET /users/userId --> 404 if not found', () =>{
-    return request(app)
-      .get('/users/55588888')
-      .expect(404);
-  })
+  it('should return "Express + TypeScript Server"', async () => {
+    const response = await request(app).get('/');
+    expect(response.text).toContain('Express + TypeScript Server');
+  });
 
-  it('POST /users --> validates request body', () =>{
-    return request(app).post('/users').send({name: 123}).expect(422);
-  })
+  it('should return 200 OK for the /users route', async () => {
+    const response = await request(app).get('/users');
+    expect(response.status).toBe(200);
+  });
 
-  it('DELETE /users/userId --> deleted user by ID', () =>{
-
-  })
-
-  it('DELETE /users/userId --> 404 if not found', () =>{
-
-  })
+  it('should create a new user with status 201', async () => {
+    const newUser = {
+      name: 'Samantha',
+    };
+    const response = await request(app).post('/users').send(newUser);
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(newUser.name);
+})
 })

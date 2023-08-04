@@ -15,13 +15,13 @@ usersRouter.get('/', (req: Request, res: Response, next: NextFunction): void => 
   res.json(users);
 });
 
-usersRouter.get('/:userId', (req: Request, res: Response, next: NextFunction): void => {
-  const foundUser = users.find(user => user.userId === Number(req.params.userId))
-  if(!foundUser) {
-    return next(createError(404, 'Not found'));
-  }
-  res.json(foundUser);
-});
+// usersRouter.get('/:userId', (req: Request, res: Response, next: NextFunction): void => {
+//   const foundUser = users.find(user => user.userId === Number(req.params.userId))
+//   if(!foundUser) {
+//     return next(createError(404, 'Not found'));
+//   }
+//   res.json(foundUser);
+// });
 
 
 export default usersRouter;

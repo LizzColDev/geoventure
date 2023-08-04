@@ -1,46 +1,20 @@
-import { Request, Response, NextFunction } from 'express';
-import { mockFirebase   } from 'firestore-jest-mock';
-import { mockCollection } from 'firestore-jest-mock/mocks/firestore';
+import request from 'supertest';
+import express, { Express } from 'express';
+import usersRouter from '../../src/routes/users';
 
-mockFirebase();
-mockCollection('users');
+const app: Express = express();
+app.use(express.json());
+app.use('/users', usersRouter);
 
-import { createUser } from '../../src/controllers/userController';
+describe('Users Router', () => {
+  it('should create a new user with status 201', async () => {
+    const newUser = {
+      name: 'John Doe',
+    };
 
-describe('POST /users', () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
-
-  beforeEach(() => {
-req={
-  body: {
-    name: 'Pepita'
-  }
-} as Request;
-
-res = {
-  status: jest.fn().mockReturnThis(),
-  json: jest.fn(),
-} as unknown as Response;
-
- next = jest.fn();
-
+    const response = await request(app).post('/users').send(newUser);
+    expect(response.status).toBe(201);
+    expect(response.body.name).toBe(newUser.name);
   });
 
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
-  it('should create a user', async () => {
-
-      await createUser(req, res, next);
-
-    
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith(expect.objectContaining({ name: 'Pepita' }));
-
-    expect(mockCollection).toHaveBeenCalledWith('users');
-    
-  });
 });
