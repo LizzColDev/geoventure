@@ -62,25 +62,7 @@ The backend server will be accessible at `http://localhost:3000/`.
 
 ## Users
 
-### POST /users
+### [POST /users]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/dev/docs/api-endpoints.yaml#L23))
 
-Description: Create a new user
-Request Body:
-- Required: true
-- Content-Type: application/json
-- Schema:
-```json
-{
-  "username": "string"
-}
-```
-Responses:
-- 201: Created
+[Click here](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L23) to view the API endpoint configuration.
 
-## Contributing
-
-Contributions are welcome! If you find any issues or have suggestions for improvements, feel free to open an issue or submit a pull request specific to the backend repository.
-
-## License
-
-This project is licensed under the MIT License.
