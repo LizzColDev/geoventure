@@ -2,7 +2,6 @@ import { NextFunction, Request, Response } from 'express';
 import createError from 'http-errors';
 import * as admin from 'firebase-admin';
 import keyData from '../../key.json';
-import { generateCustomId } from '../utils/customIds';
 
 const params = {
   type: keyData.type,
@@ -31,16 +30,17 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       return next(createError(422, 'Invalid name. Name must be a non-empty string.'));
     }
 
-    const customUserId = generateCustomId()
 
     const newUser = {
-      userId: customUserId,
       name: body.name.trim(),
     };
 
-    await db.collection('users').doc(customUserId).set(newUser);
+    const documentREference = await db.collection('users').add(newUser);
 
-    res.status(201).json(newUser);
+    res.status(201).json({
+      id: documentREference.id,
+      ...newUser,
+    });
   } catch (error) {
     next(error);
   }

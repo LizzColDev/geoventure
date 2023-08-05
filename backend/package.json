@@ -10,7 +10,7 @@
     "build": "npx tsc",
     "start": "node dist/src/index.js",
     "dev": "concurrently \"npx tsc --watch\" \"nodemon -q dist/src/index.js\"",
-    "test": "jest --watchAll --coverage"
+    "test": "jest --coverage"
   },
   "author": "",
   "license": "ISC",
