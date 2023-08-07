@@ -33,9 +33,11 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
       id: documentREference.id,
       ...newUser,
     });
+
   } catch (error) {
     next(error);
   }
 };
 
 export { createUser };
+
