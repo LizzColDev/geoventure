@@ -2,8 +2,10 @@ version: '3.9'
 services:
   backend:
     build:
-      context: .
+      context: ./backend
       dockerfile: Dockerfile
     container_name: geoventure-backend-app
+    environment:
+      - FIREBASE_KEY_JSON_PATH=./key.json
     ports:
       - "3000:3000"
