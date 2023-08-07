@@ -79,4 +79,18 @@ describe("User Controller - POST /users", () => {
     // Assert that 'next' is called with the database error
     expect(next).toHaveBeenCalledWith(errorMock);
   });
+
 });
+
+describe('GET /api/users', () => {
+
+  it("should respond with an array of all users in firebase", async () => {
+
+  });
+
+  it("should respond with 500 and an error message for a server error", async () => {
+
+  });
+
+})
+
