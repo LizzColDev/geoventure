@@ -1,10 +1,10 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import * as admin from "firebase-admin";
+import * as serviceAccount from '../../key.json';
 
-const FIREBASE_KEY_JSON_PATH = process.env.FIREBASE_KEY_JSON_PATH || "/app/key.json";
 admin.initializeApp({
-  credential: admin.credential.cert(FIREBASE_KEY_JSON_PATH),
+  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
 });
 
 const db = admin.firestore();
