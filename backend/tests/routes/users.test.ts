@@ -17,6 +17,13 @@ jest.mock("../../src/controllers/userController", () => ({
     }
     res.status(201).end();
   },
+  getUsers: async (req: any, res: any) => {
+    const mockUsers = [
+      { id: '5', userName: 'Perla' },
+      { id: '4', userName: 'Black' }
+    ];
+    res.status(200).json(mockUsers);
+  },
 }));
 
 describe("Users Router", () => {
@@ -33,5 +40,16 @@ describe("Users Router", () => {
     expect(response.body.error).toBe(
       "Invalid name, name must be a non-empty string."
     );
+  });
+});
+
+describe("Users Router - GET /users", () => {
+  it("should respond with an array of users and a 200 status code", async () => {
+    const response = await request(app).get("/users");
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual([
+      { id: '5', userName: 'Perla' },
+      { id: '4', userName: 'Black' }
+    ]);
   });
 });

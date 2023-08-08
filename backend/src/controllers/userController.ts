@@ -9,7 +9,7 @@ admin.initializeApp({
 
 const db = admin.firestore();
 
-const createUser = async (req: Request, res: Response, next: NextFunction) => {
+export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { body } = req;
 
@@ -39,5 +39,22 @@ const createUser = async (req: Request, res: Response, next: NextFunction) => {
   }
 };
 
-export { createUser };
+export const getUsers =async (req:Request, res: Response, next: NextFunction) => {
+  try {
+    const usersRef = await db.collection('users').get();
+    console.log(usersRef)
+    const usersData: any[] = [];
+    usersRef.forEach((userDoc)=>{
+    console.log(userDoc)
+
+      usersData.push({ id: userDoc.id, ...userDoc.data() });
+      console.log('', usersData)
+    });
+    return res.status(200).json(usersData);
+  } catch(error) {
+    console.log('error get', error)
+    next(error);
+
+  }
+}
 

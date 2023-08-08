@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser } from "../../src/controllers/userController";
+import { createUser, getUsers } from "../../src/controllers/userController";
 import createError from 'http-errors';
 
 // Mocking the Firestore 'add' function with a resolved promise
@@ -7,7 +7,28 @@ const addMock = jest.fn((data: object) => {
   return Promise.resolve({ id: "1", username: "Samantha" });
 });
 
-// Mocking the 'firebase-admin' module with custom implementations
+const docsMock = jest.fn((data: object) => {
+  return Promise.resolve([
+    { id: 'user1', userName: 'Test User 1'},
+    { id: 'user2', userName: 'Test User 2'}
+  ]);
+});
+
+    
+const getMock = jest.fn(() => ({
+  forEach: (callback: (value: any, index: number, array: any[]) => void) => {
+    const mockUsers = [
+      { id: 'user1', userName: 'Test User 1' },
+      { id: 'user2', userName: 'Test User 2' }
+    ];
+
+    // Loop through the mockUsers array and execute the callback for each user
+    mockUsers.forEach((user, index) => {
+      callback({ data: () => user, id: `user${index + 1}` }, index, mockUsers);
+    });
+  }
+}));
+
 jest.mock("firebase-admin", () => ({
   ...jest.mock("firebase-admin"),
   credential: {
@@ -16,7 +37,9 @@ jest.mock("firebase-admin", () => ({
   initializeApp: jest.fn(),
   firestore: () => ({
     collection: () => ({
+      docs: docsMock ,
       add: addMock,
+      get: getMock,
     }),
   }),
 }));
@@ -82,15 +105,47 @@ describe("User Controller - POST /users", () => {
 
 });
 
-describe('GET /api/users', () => {
+describe('GET /users', () => {
+  let req: Request;
+  let res: Response;
+  let next: NextFunction;
+
+  const mockResponse = (): Response => {
+    const response: Partial<Response> = {};
+    response.status = jest.fn().mockReturnValue(response);
+    response.json = jest.fn();
+    return response as Response;
+  };
+
+  beforeEach(() => {
+    req = {} as Request;
+    res = mockResponse();
+    next = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
 
   it("should respond with an array of all users in firebase", async () => {
 
+
+    await getUsers(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([
+      { id: 'user1', userName: 'Test User 1'},
+      { id: 'user2', userName: 'Test User 2'}
+    ]);
   });
 
   it("should respond with 500 and an error message for a server error", async () => {
+    // const errorMock = new Error("Database error");
+    // getMock.mockReturnValueOnce(Promise.reject(errorMock));
 
+    // await getUsers(req, res, next);
+
+    // expect(next).toHaveBeenCalledWith(createError(500, "Error fetching users data"));
   });
-
-})
+});
 
