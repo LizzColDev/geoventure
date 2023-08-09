@@ -31,10 +31,10 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
               required:
-                - username
+                - name
       responses:
         '201':
           description: Created
@@ -75,10 +75,10 @@ paths:
             schema:
               type: object
               properties:
-                username:
+                name:
                   type: string
               required:
-                - username
+                - name
       responses:
         '200':
           description: OK
