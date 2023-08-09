@@ -85,4 +85,22 @@ describe("Users Router - GET /users", () => {
     expect(response.status).toBe(404);
     expect(response.body.error).toBe('No users found.');
   });
+
+  
+});
+
+describe("Users Router - GET /users:userId", () => {
+  it("should respond with the user details and a 200 status code", async () => {
+   
+  });
+
+  it("should respond with an error and a 500 status code for user retrieval failure", async () => {
+    
+  });
+
+  it('should respond with a 404 status code for user not found', async () => {
+    
+  });
+
+  
 });
