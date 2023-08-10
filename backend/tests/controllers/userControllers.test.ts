@@ -1,6 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { createUser, getUsers } from "../../src/controllers/userController";
+import { createUser, getUserById, getUsers } from "../../src/controllers/userController";
 import createError from 'http-errors';
+
+let req: Request;
+let res: Response;
+let next: NextFunction;
 
 // Mocking the Firestore 'add' function with a resolved promise
 const addMock = jest.fn((data: object) => {
@@ -45,9 +49,6 @@ jest.mock("firebase-admin", () => ({
 }));
 
 describe("User Controller - POST /users", () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
 
   beforeEach(() => {
     req = {
@@ -106,9 +107,6 @@ describe("User Controller - POST /users", () => {
 });
 
 describe('GET /users', () => {
-  let req: Request;
-  let res: Response;
-  let next: NextFunction;
 
   const mockResponse = (): Response => {
     const response: Partial<Response> = {};
@@ -129,7 +127,6 @@ describe('GET /users', () => {
 
   it("should respond with an array of all users in firebase", async () => {
 
-
     await getUsers(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(200);
@@ -144,3 +141,17 @@ describe('GET /users', () => {
   });
 });
 
+describe("Users Controllers - GET /users/:userId", () => {
+  it("should respond with the user details in firebase", async () => {
+    await getUserById(req, res, next);
+  });
+
+  it("should respond with an error and a 500 status code for user retrieval failure", async () => {
+    await getUserById(req, res, next);
+
+  });
+
+  it("should respond with a 404 status code for user not found", async () => {
+    await getUserById(req, res, next);
+  });
+});
