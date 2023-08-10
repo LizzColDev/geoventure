@@ -13,6 +13,7 @@ jest.mock("../../src/controllers/userController", () => {
     ...originalModule,
     createUser: jest.fn(),
     getUsers: jest.fn(),
+    getUserById: jest.fn(),
   };
 });
 
@@ -94,6 +95,7 @@ describe("Users Router - GET /users/:userId", () => {
   it("should respond with the user details and a 200 status code", async () => {
     const mockUserId = "123";
     const mockUser = { id: mockUserId, userName: "Pepita" };
+    
     (userController.getUserById as jest.Mock).mockImplementation(
       async (req: express.Request, res: express.Response, next: express.NextFunction) => {
         res.status(200).json(mockUser);
