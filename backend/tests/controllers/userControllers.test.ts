@@ -140,12 +140,7 @@ describe('GET /users', () => {
   });
 
   it("should respond with 500 and an error message for a server error", async () => {
-    // const errorMock = new Error("Database error");
-    // getMock.mockReturnValueOnce(Promise.reject(errorMock));
 
-    // await getUsers(req, res, next);
-
-    // expect(next).toHaveBeenCalledWith(createError(500, "Error fetching users data"));
   });
 });
 
