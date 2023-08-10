@@ -2,6 +2,7 @@ import request from "supertest";
 import express, { Express, Response, NextFunction, Request } from "express";
 import usersRouter from "../../src/routes/users";
 import * as userController from '../../src/controllers/userController';
+
 const app: Express = express();
 app.use(express.json());
 app.use("/users", usersRouter);
@@ -89,18 +90,47 @@ describe("Users Router - GET /users", () => {
   
 });
 
-describe("Users Router - GET /users:userId", () => {
+describe("Users Router - GET /users/:userId", () => {
   it("should respond with the user details and a 200 status code", async () => {
-   
+    const mockUserId = "123";
+    const mockUser = { id: mockUserId, userName: "Pepita" };
+    (userController.getUserById as jest.Mock).mockImplementation(
+      async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        res.status(200).json(mockUser);
+      }
+    );
+
+    const response = await request(app).get(`/users/${mockUserId}`);
+
+    expect(response.status).toBe(200);
+    expect(response.body).toEqual(mockUser);
   });
 
   it("should respond with an error and a 500 status code for user retrieval failure", async () => {
-    
+    const mockUserId = "123";
+    (userController.getUserById as jest.Mock).mockImplementation(
+      async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        res.status(500).json({ error: "User retrieval failed" });
+      }
+    );
+
+    const response = await request(app).get(`/users/${mockUserId}`);
+
+    expect(response.status).toBe(500);
+    expect(response.body.error).toBe("User retrieval failed");
   });
 
-  it('should respond with a 404 status code for user not found', async () => {
-    
-  });
+  it("should respond with a 404 status code for user not found", async () => {
+    const mockUserId = "123";
+    (userController.getUserById as jest.Mock).mockImplementation(
+      async (req: express.Request, res: express.Response, next: express.NextFunction) => {
+        return res.status(404).json({ error: "User not found." });
+      }
+    );
 
-  
+    const response = await request(app).get(`/users/${mockUserId}`);
+
+    expect(response.status).toBe(404);
+    expect(response.body.error).toBe("User not found.");
+  });
 });

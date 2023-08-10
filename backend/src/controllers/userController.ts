@@ -61,3 +61,26 @@ export const getUsers =async (req:Request, res: Response, next: NextFunction) =>
   }
 }
 
+export const getUserById =async (req:Request, res: Response, next: NextFunction) => {
+  
+  try {
+    const userId = req.params.userId;
+    
+    if (!userId) {
+      return next(createError(400, "User ID is required."));
+    }
+
+    const userDoc = await db.collection('users').doc(userId).get();
+
+    if (!userDoc.exists) {
+      return next(createError(404, "User not found."));
+    }
+
+    const userData = userDoc.data();
+    return res.status(200).json({ id: userDoc.id, ...userData });
+
+  } catch (error) {
+    next(error);
+  }
+
+}
