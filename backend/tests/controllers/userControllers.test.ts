@@ -143,7 +143,21 @@ describe('GET /users', () => {
 
 describe("Users Controllers - GET /users/:userId", () => {
   it("should respond with the user details in firebase", async () => {
+    console.log("res object before calling getUserById:", res);
     await getUserById(req, res, next);
+    console.log("res object after calling getUserById:", res);
+  
+    console.log("res.status mock:", res.status);
+  
+    const statusMock = res.status as jest.MockedFunction<typeof res.status>;
+    const jsonMock = res.json as jest.MockedFunction<typeof res.json>;
+  
+    console.log("statusMock.mock.calls:", statusMock.mock.calls);
+    console.log("jsonMock.mock.calls:", jsonMock.mock.calls);
+  
+    expect(statusMock).toHaveBeenCalledWith(200);
+    expect(jsonMock).toHaveBeenCalledWith({ id: 'user1', userName: 'Juana Test' });
+    expect(next).not.toHaveBeenCalled();
   });
 
   it("should respond with an error and a 500 status code for user retrieval failure", async () => {
