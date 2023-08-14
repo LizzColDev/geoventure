@@ -4,9 +4,9 @@ import {createUser, getUsers, getUserById} from '../controllers/userController'
 
 const usersRouter = express.Router();
 
-usersRouter.post('/', createUser);
-usersRouter.get('/', getUsers);
-usersRouter.get('/:userId', getUserById);
+usersRouter.post('/user', createUser);
+usersRouter.get('/users', getUsers);
+usersRouter.get('/user/:userId', getUserById);
 
 
 
