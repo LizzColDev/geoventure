@@ -185,7 +185,20 @@ describe("Users Controllers - GET /users/:userId", () => {
 
   it("should respond with a 404 status code for user not found", async () => {
 
-    await getUserById(req, res, next);
+    getUserByIdMock = (userId: string) => ({
+      get: async () => ({
+        exists: false,
+        id: userId,
+        data: () => ({ name: "" }),
+      }),
+    });
+  
+  await getUserById(req, res, next);
+
+  expect(next).toHaveBeenCalledWith(
+    createError(404, "User not found.")
+  );
 
   });
+
 });

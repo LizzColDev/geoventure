@@ -65,10 +65,6 @@ export const getUserById =async (req:Request, res: Response, next: NextFunction)
   
   try {
     const userId = req.params.userId;
-    
-    if (!userId) {
-      return next(createError(400, "User ID is required."));
-    }
 
     const userDoc = await db.collection('users').doc(userId).get();
 
