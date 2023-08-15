@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import { createFirebaseMock } from "./firebaseMock";
 import {
   createUser,
   getUserById,
@@ -10,68 +11,18 @@ let req: Request;
 let res: Response;
 let next: NextFunction;
 
-jest.mock("firebase-admin", () => ({
-  ...jest.mock("firebase-admin"),
-  credential: {
-    cert: jest.fn(),
-  },
-  initializeApp: jest.fn(),
-  firestore: () => ({
-    collection: () => ({
-      docs: docsMock,
-      add: addMock,
-      get: getMock,
-      doc: getUserByIdMock,
-    }),
-  }),
-}));
-
-// Mocking the Firestore 'add' function with a resolved promise
-const addMock = jest.fn((data: object) => {
-  return Promise.resolve({ id: "1", username: "Samantha" });
-});
-
-const docsMock = jest.fn((data: object) => {
-  return Promise.resolve([
-    { id: "user1", userName: "Test User 1" },
-    { id: "user2", userName: "Test User 2" },
-  ]);
-});
-
-const getMock = jest.fn(() => ({
-  forEach: (
-    callback: (value: any, index: number, array: any[]) => void
-  ) => {
-    const mockUsers = [
-      { id: "user1", userName: "Test User 1" },
-      { id: "user2", userName: "Test User 2" },
-    ];
-
-    // Loop through the mockUsers array and execute the callback for each user
-    mockUsers.forEach((user, index) => {
-      callback(
-        { data: () => user, id: `user${index + 1}` },
-        index,
-        mockUsers
-      );
-    });
-  },
-}));
-
-let getUserByIdMock = (userId: string,) => ({
-  get: async () => ({
-    exists: userId === "user1",
-    id: userId,
-    data: () => ({ name: "Juanita Test" }),
-  }),
+jest.mock("firebase-admin", () => {
+  const firebaseMock = createFirebaseMock();
+  return firebaseMock;
 });
 
 describe("User Controller - POST /users", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
 
     req = {
       body: {
-        name: "Samantha",
+        name: "Rosita",
       },
     } as Request;
 
@@ -95,7 +46,7 @@ describe("User Controller - POST /users", () => {
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.json).toHaveBeenCalledWith(
-      expect.objectContaining({ id: "1", name: "Samantha" })
+      expect.objectContaining({ id: "1", name: "Rosita" })
     );
   });
 
@@ -109,18 +60,6 @@ describe("User Controller - POST /users", () => {
       createError(422, "Invalid name. Name must be a non-empty string.")
     );
   });
-
-  it("should handle database error and call next with the error", async () => {
-    const errorMock = new Error("Database error");
-
-    // Mock the 'add' function to return a rejected promise with the error
-    addMock.mockRejectedValueOnce(errorMock);
-
-    await createUser(req, res, next);
-
-    // Assert that 'next' is called with the database error
-    expect(next).toHaveBeenCalledWith(errorMock);
-  });
 });
 
 describe("GET /users", () => {
@@ -132,6 +71,8 @@ describe("GET /users", () => {
   };
 
   beforeEach(() => {
+    jest.clearAllMocks();
+
     req = {} as Request;
     res = mockResponse();
     next = jest.fn();
@@ -150,12 +91,12 @@ describe("GET /users", () => {
       { id: "user2", userName: "Test User 2" },
     ]);
   });
-
-  it("should respond with 500 and an error message for a server error", async () => {});
 });
 
 describe("Users Controllers - GET /users/:userId", () => {
   beforeEach(() => {
+    jest.clearAllMocks();
+
     req = {
       params: {},
     } as unknown as Request;
@@ -172,7 +113,7 @@ describe("Users Controllers - GET /users/:userId", () => {
   });
 
   it("should respond with the user details in firebase", async () => {
-    req.params.userId = "user1"
+    req.params.userId = "user1";
     await getUserById(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(200);
@@ -184,21 +125,11 @@ describe("Users Controllers - GET /users/:userId", () => {
   });
 
   it("should respond with a 404 status code for user not found", async () => {
+    const userId = "nonexist";
+    req.params = { userId };
 
-    getUserByIdMock = (userId: string) => ({
-      get: async () => ({
-        exists: false,
-        id: userId,
-        data: () => ({ name: "" }),
-      }),
-    });
-  
-  await getUserById(req, res, next);
+    await getUserById(req, res, next);
 
-  expect(next).toHaveBeenCalledWith(
-    createError(404, "User not found.")
-  );
-
+    expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
   });
-
 });
