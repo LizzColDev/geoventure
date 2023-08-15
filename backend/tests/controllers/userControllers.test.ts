@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { createFirebaseMock } from "./firebaseMock";
+import { addMock, createFirebaseMock, getMock, getUserByIdMock } from "./firebaseMock";
 import {
   createUser,
   getUserById,
@@ -11,15 +11,16 @@ let req: Request;
 let res: Response;
 let next: NextFunction;
 
+// Mocking Firebase admin using custom mock setup
 jest.mock("firebase-admin", () => {
-  const firebaseMock = createFirebaseMock();
+  const firebaseMock = createFirebaseMock(); // Creating a mock instance
   return firebaseMock;
 });
 
 describe("User Controller - POST /users", () => {
   beforeEach(() => {
     jest.clearAllMocks();
-
+    // Setting up the request body
     req = {
       body: {
         name: "Rosita",
@@ -60,9 +61,20 @@ describe("User Controller - POST /users", () => {
       createError(422, "Invalid name. Name must be a non-empty string.")
     );
   });
+  it("should handle and call 'next' for caught errors", async () => {
+    // Mock an error being thrown in the controller
+    const expectedError = new Error("Test error");
+    addMock.mockRejectedValueOnce(expectedError);
+
+    await createUser(req, res, next);
+
+    // Assert that 'next' is called with the expected error
+    expect(next).toHaveBeenCalledWith(expectedError);
+  });
 });
 
 describe("GET /users", () => {
+  // Function to create a mock Express response object
   const mockResponse = (): Response => {
     const response: Partial<Response> = {};
     response.status = jest.fn().mockReturnValue(response);
@@ -83,13 +95,38 @@ describe("GET /users", () => {
   });
 
   it("should respond with an array of all users in firebase", async () => {
+    
     await getUsers(req, res, next);
 
+    // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([
       { id: "user1", userName: "Test User 1" },
       { id: "user2", userName: "Test User 2" },
     ]);
+  });
+
+  it("should respond with 404 and an error message when no users exist in firebase", async () => {
+    getMock.mockReturnValueOnce({
+      forEach: (callback: Function) => {},
+    })
+
+    await getUsers(req, res, next);
+    expect(next).toHaveBeenCalledWith(
+      createError(404, "Not users found.")
+    );
+
+  });
+  it("should handle errors and call 'next'", async () => {
+    getMock.mockImplementationOnce(() => {
+      throw new Error("Error retrieving user data");
+    });
+
+    await getUsers(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Error retrieving user data" })
+    );
   });
 });
 
@@ -115,7 +152,8 @@ describe("Users Controllers - GET /users/:userId", () => {
   it("should respond with the user details in firebase", async () => {
     req.params.userId = "user1";
     await getUserById(req, res, next);
-
+    
+    // Assert the response status, JSON, and next not being called
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       id: "user1",
@@ -130,6 +168,8 @@ describe("Users Controllers - GET /users/:userId", () => {
 
     await getUserById(req, res, next);
 
+    // Assert that next is called with a 404 error
     expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
   });
+
 });

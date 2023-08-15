@@ -6,7 +6,6 @@ export const createFirebaseMock = () => ({
   initializeApp: jest.fn(),
   firestore: () => ({
     collection: () => ({
-      docs: docsMock,
       add: addMock,
       get: getMock,
       doc: getUserByIdMock,
@@ -15,18 +14,12 @@ export const createFirebaseMock = () => ({
 });
 
 // Mocking the Firestore 'add' function with a resolved promise
-const addMock = jest.fn((data: object) => {
+export const addMock = jest.fn((data: object) => {
   return Promise.resolve({ id: "1", username: "Samantha" });
 });
 
-const docsMock = jest.fn((data: object) => {
-  return Promise.resolve([
-    { id: "user1", userName: "Test User 1" },
-    { id: "user2", userName: "Test User 2" },
-  ]);
-});
 
-const getMock = jest.fn(() => ({
+export const getMock = jest.fn(() => ({
   forEach: (callback: (value: any, index: number, array: any[]) => void) => {
     const mockUsers = [
       { id: "user1", userName: "Test User 1" },
