@@ -1,9 +1,10 @@
 import { Request, Response, NextFunction } from "express";
-import { addMock, createFirebaseMock, getMock, getUserByIdMock } from "./firebaseMock";
+import { addMock, createFirebaseMock, getMock } from "./firebaseMock";
 import {
   createUser,
   getUserById,
   getUsers,
+  deleteUser,
 } from "../../src/controllers/userController";
 import createError from "http-errors";
 
@@ -172,4 +173,48 @@ describe("Users Controllers - GET /users/:userId", () => {
     expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
   });
 
+});
+
+describe("User Controller - PUT /users/:userId", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    req = {
+      params: {},
+      body: {},
+    } as unknown as Request;
+
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    next = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should delete a user in Firebase with valid data", async () => {
+    req.params.userId = "user1";
+
+    await deleteUser(req, res, next);
+
+    // Assert the response status and JSON
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "user1"})
+    );
+  });
+
+  it("should respond with 404 status for non-existent user", async () => {
+    req.params.userId = "nonexistent";
+    req.body = { name: "deleted Name" };
+
+    await deleteUser(req, res, next);
+
+    // Assert that next is called with a 404 error
+    expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
+  });
 });

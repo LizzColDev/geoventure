@@ -47,4 +47,5 @@ export const getUserByIdMock = (userId: string) => ({
       };
     }
   },
+  delete: async (data: any) => {return Promise.resolve();}
 });
