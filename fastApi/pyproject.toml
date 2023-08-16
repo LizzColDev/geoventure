@@ -1,0 +1,17 @@
+[tool.poetry]
+name = "geoventure"
+version = "0.1.0"
+description = ""
+authors = ["LizzColDev <lquintero28@live.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+fastapi = "^0.101.1"
+uvicorn = "^0.23.2"
+gunicorn = "^21.2.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"

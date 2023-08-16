@@ -1,0 +1,23 @@
+# Exclude common Python files and directories
+__pycache__
+*.pyc
+*.pyo
+
+# Exclude Poetry-related files
+poetry.lock
+.venv
+
+# Exclude any temporary or build files
+*.swp
+*.log
+*.tmp
+
+# Exclude IDE-specific files
+.vscode/
+.idea/
+
+# Exclude any local development files
+.env
+
+# Exclude the Dockerignore file itself
+.dockerignore

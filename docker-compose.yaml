@@ -1,0 +1,11 @@
+version: '3.9'
+services:
+  fastapi:
+    build:
+      context: ./fastApi
+      dockerfile: Dockerfile
+    container_name: fastapi-app
+    ports:
+      - "8000:8000"
+    volumes:
+      - .:/fastApi:ro
