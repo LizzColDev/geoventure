@@ -47,5 +47,19 @@ export const getUserByIdMock = (userId: string) => ({
       };
     }
   },
-  delete: async (data: any) => {return Promise.resolve();}
+  
+  delete: async (data: any) => {return Promise.resolve()},
+  
+  set: async () => {
+    if (userId === "user1") {
+      return {
+        id: userId,
+        data: () => ({ initialTime: Number }),
+      };
+    } else {
+      return {
+        exists: false,
+      };
+    }
+  },
 });
