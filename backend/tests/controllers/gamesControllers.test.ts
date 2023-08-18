@@ -1,6 +1,6 @@
 import { Request, Response, NextFunction } from "express";
-import { createGame } from "../../src/controllers/userController";
 import { createFirebaseMock } from "./firebaseMock";
+import { createGame } from "../../src/controllers/gamesController";
 let req: Request;
 let res: Response;
 let next: NextFunction;
@@ -33,14 +33,12 @@ describe("Games Controller - POST /games", () => {
     });
 
     it('Should create a new game', async () => {
-        const firebaseMock = createFirebaseMock();
-        jest.doMock("firebase-admin", () => firebaseMock);
 
         await createGame(req, res, next);
 
         expect(res.status).toHaveBeenCalledWith(201);
         expect(res.send).toBeCalledWith({
-            id: 'user1',
+            userId: 'user1',
             initialTime: expect.any(Number),
         });
         
