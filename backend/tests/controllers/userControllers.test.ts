@@ -175,7 +175,7 @@ describe("Users Controllers - GET /users/:userId", () => {
 
 });
 
-describe("User Controller - PUT /users/:userId", () => {
+describe("User Controller - DELETE /users/:userId", () => {
   beforeEach(() => {
     jest.clearAllMocks();
 
