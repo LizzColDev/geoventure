@@ -213,7 +213,11 @@ describe("User Controller - DELETE /users/:userId", () => {
 
     // Verify that deleteMock is called
     expect(deleteMock).toHaveBeenCalled();
-
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith(
@@ -225,8 +229,17 @@ describe("User Controller - DELETE /users/:userId", () => {
     req.params.userId = "nonexistent";
 
     await deleteUser(req, res, next);
+
+    // Verify that getUserByIdMock is called
     expect(getUserByIdMock).toHaveBeenCalledWith('nonexistent');
+
+    // Verify that deleteMock is not called
     expect(deleteMock).not.toHaveBeenCalled();
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+
     // Assert that next is called with a 404 error
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining({ message: "User not found" })
