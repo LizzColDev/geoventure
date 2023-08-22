@@ -11,6 +11,7 @@ export const createFirebaseMock = () => ({
       doc: (docId: string) => ({
         get: getUserByIdMock.bind(null, docId),
         delete: deleteMock,
+        set: addGameMock,
       }),
     }),
   }),
@@ -50,3 +51,5 @@ export const getUserByIdMock =  jest.fn(async (userId: string) => {
   });
 
 export const deleteMock = jest.fn(() => Promise.resolve());
+
+export const addGameMock = jest.fn(() => Promise.resolve());
