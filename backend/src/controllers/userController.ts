@@ -87,7 +87,7 @@ export const deleteUser = async (req: Request, res: Response, next: NextFunction
       throw createError(404, "User not found.");
     }
 
-    await userRef.delete(userDoc);
+    await userRef.delete();
     res.status(204).json({
       id: userId,
     });

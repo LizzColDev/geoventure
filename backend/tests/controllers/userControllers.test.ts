@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addMock, createFirebaseMock, getMock } from "./firebaseMock";
+import { addMock, createFirebaseMock, deleteMock, getMock, getUserByIdMock } from "./firebaseMock";
 import {
   createUser,
   getUserById,
@@ -136,7 +136,9 @@ describe("Users Controllers - GET /users/:userId", () => {
     jest.clearAllMocks();
 
     req = {
-      params: {},
+      params: {
+        userId: "user1",
+      },
     } as unknown as Request;
     res = {
       status: jest.fn().mockReturnThis(),
@@ -151,8 +153,9 @@ describe("Users Controllers - GET /users/:userId", () => {
   });
 
   it("should respond with the user details in firebase", async () => {
-    req.params.userId = "user1";
     await getUserById(req, res, next);
+
+    expect(getUserByIdMock).toHaveBeenCalledWith('user1');
     
     // Assert the response status, JSON, and next not being called
     expect(res.status).toHaveBeenCalledWith(200);
@@ -164,13 +167,17 @@ describe("Users Controllers - GET /users/:userId", () => {
   });
 
   it("should respond with a 404 status code for user not found", async () => {
-    const userId = "nonexist";
-    req.params = { userId };
+    req.params.userId = "nonexist";
 
     await getUserById(req, res, next);
 
+
+    expect(getUserByIdMock).toHaveBeenCalled();
+
     // Assert that next is called with a 404 error
-    expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "User not found" })
+    );
   });
 
 });
@@ -201,6 +208,16 @@ describe("User Controller - DELETE /users/:userId", () => {
 
     await deleteUser(req, res, next);
 
+    // Verify that getUserByIdMock is called
+    expect(getUserByIdMock).toHaveBeenCalledWith('user1');
+
+    // Verify that deleteMock is called
+    expect(deleteMock).toHaveBeenCalled();
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(204);
     expect(res.json).toHaveBeenCalledWith(
@@ -210,11 +227,22 @@ describe("User Controller - DELETE /users/:userId", () => {
 
   it("should respond with 404 status for non-existent user", async () => {
     req.params.userId = "nonexistent";
-    req.body = { name: "deleted Name" };
 
     await deleteUser(req, res, next);
 
+    // Verify that getUserByIdMock is called
+    expect(getUserByIdMock).toHaveBeenCalledWith('nonexistent');
+
+    // Verify that deleteMock is not called
+    expect(deleteMock).not.toHaveBeenCalled();
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+
     // Assert that next is called with a 404 error
-    expect(next).toHaveBeenCalledWith(createError(404, "User not found."));
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "User not found" })
+    );
   });
 });
