@@ -37,7 +37,6 @@ export const getMock = jest.fn(() => ({
 
 // Creating a mock for Firebase Firestore operations in the context of retrieving user data
 export const getUserByIdMock =  jest.fn(async (userId: string) => {
-  console.log(userId)
     // Simulating the behavior of the `get` method to retrieve user data
     if (userId === "user1") {
       return {
@@ -46,7 +45,6 @@ export const getUserByIdMock =  jest.fn(async (userId: string) => {
         data: () => ({ name: "Juanita Test" }),
       };
     } else {
-      console.log(userId)
       throw new Error("User not found");
     }
   });
