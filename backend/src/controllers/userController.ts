@@ -80,3 +80,24 @@ export const getUserById =async (req:Request, res: Response, next: NextFunction)
   }
 
 }
+
+export const deleteUser = async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const userId = req.params.userId;
+
+    const userRef = db.collection("users").doc(userId);
+    const userDoc = await userRef.get()
+
+    if(!userDoc.exists) {
+      throw createError(404, "User not found.");
+    }
+
+    await userRef.delete();
+    res.status(204).json({
+      id: userId,
+    });
+
+  } catch (error) {
+    next(error);
+  }
+};

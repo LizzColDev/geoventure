@@ -9,7 +9,7 @@ app.use(express.json());
 app.use('/', usersRouter);
 
 app.listen(port, () => {
-  console.log(`Server is running on port pepito ${port}...`)
+  console.log(`Server is running on port ${port}...`)
 })
 
 export default app;

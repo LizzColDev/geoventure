@@ -48,4 +48,4 @@ firebase-adminsdk*.json
 .cache/
 firebase-debug.log
 
-key.json
+**/key.json
