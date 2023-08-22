@@ -8,7 +8,10 @@ export const createFirebaseMock = () => ({
     collection: () => ({
       add: addMock,
       get: getMock,
-      doc: getUserByIdMock,
+      doc: (docId: string) => ({
+        get: getUserByIdMock.bind(null, docId),
+        delete: deleteMock,
+      }),
     }),
   }),
 });
@@ -33,8 +36,8 @@ export const getMock = jest.fn(() => ({
 }));
 
 // Creating a mock for Firebase Firestore operations in the context of retrieving user data
-export const getUserByIdMock = (userId: string) => ({
-  get: async () => {
+export const getUserByIdMock =  jest.fn(async (userId: string) => {
+  console.log(userId)
     // Simulating the behavior of the `get` method to retrieve user data
     if (userId === "user1") {
       return {
@@ -43,14 +46,9 @@ export const getUserByIdMock = (userId: string) => ({
         data: () => ({ name: "Juanita Test" }),
       };
     } else {
-      return {
-        exists: false,
-      };
+      console.log(userId)
+      throw new Error("User not found");
     }
-  },
-  delete: async (data: any) => {
-    // Simulating the behavior of the `delete` method for successful deletion
-    // Returning a resolved Promise to simulate a successful deletion
-    return Promise.resolve();
-  },
-});
+  });
+
+export const deleteMock = jest.fn(() => Promise.resolve());
