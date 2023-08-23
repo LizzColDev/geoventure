@@ -47,5 +47,44 @@ fastApi/
 └── README.md          # Project README
 ```
 
-#### License
-This project is licensed under the MIT License - see the LICENSE file for details.
+## API Endpoints
+
+### Users
+
+#### [POST /users]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/dev/docs/api-endpoints.yaml#L23))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L23) to view the API endpoint configuration.
+
+#### [GET /users]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L15))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L15) to view the API endpoint configuration.
+
+#### [GET /users/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/33bf977e4f51822099f4b17965e834f8ee2e981d/docs/api-endpoints.yaml#L42))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/33bf977e4f51822099f4b17965e834f8ee2e981d/docs/api-endpoints.yaml#L42) to view the API endpoint configuration.
+
+#### [DELETE /users/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88) to view the API endpoint configuration.
+
+### Games
+
+#### [POST /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L114))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L114) to view the API endpoint configuration.
+
+#### [GET /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L106C1-L106C1))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L106C1-L106C1) to view the API endpoint configuration.
+
+#### [GET /games/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L134))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L134) to view the API endpoint configuration.
+
+#### [PATCH /games/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L152))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L152) to view the API endpoint configuration.
+
+#### [DELETE /games/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L186))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/67f7c737c188e9d3df003f1f4e1606062b306fd6/docs/api-endpoints.yaml#L186) to view the API endpoint configuration.
