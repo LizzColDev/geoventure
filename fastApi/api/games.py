@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from database.firestore import add_data, get_data, get_data_by_id
+from database.firestore import add_data, get_data, get_data_by_id, delete_data_by_id
 from datetime import datetime
 from models.game import NewGame
 
@@ -38,3 +38,11 @@ def get_game(game_id: str):
 
     return game_data
 
+@router.delete("/game/{game_id}")
+def delete_game(game_id: str):
+  id = game_id.strip()
+
+  game_deleted = delete_data_by_id(id, "games")
+
+  return game_deleted
+  
