@@ -23,20 +23,26 @@ def get_data(collection, id_key):
     return data_list
    
 def get_data_by_id(id, collection):
-    try:
-        user_doc = db.collection(collection).document(id).get()
 
-        return user_doc
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error retrieving user data from the database.")
+    doc = db.collection(collection).document(id).get()        
+    data = doc.to_dict()
+
+    if not data:
+        raise HTTPException(status_code=404, detail= f"Data with ID {id} not found in {collection} collection.")
+    
+    return {
+        "id": doc.id,
+        **data
+    }
 
 def delete_data_by_id(id, collection):
-    user_ref = db.collection(collection).document(id)
-    user_doc = user_ref.get()
+    ref = db.collection(collection).document(id)
+    doc = ref.get()
 
-    if not user_doc.exists: 
-        raise HTTPException(status_code=404, detail="User not found.")
+    if not doc.exists: 
+        raise HTTPException(status_code=404, detail=f"Document with ID {id} not found in {collection} collection.")
 
-    user_ref.delete()
+    ref.delete()
 
-    return {"message": f"User with ID {id} deleted."}
+    return {"message": f"Document with ID {id} deleted from {collection} collection."}
+    
