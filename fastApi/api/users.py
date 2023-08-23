@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.user import NewUser
-from database.firestore import add_user_data, get_users_data, get_user_by_id
+from database.firestore import add_user_data, get_users_data, get_user_by_id, delete_user_by_id
 
 router = APIRouter()
 
@@ -57,4 +57,10 @@ def get_user(user_id: str):
         raise http_exc
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error retrieving user.")
-        
+
+@router.delete("/user/{user_id}")
+def delete_user(user_id: str):
+    id = user_id.strip()
+    user_deleted = delete_user_by_id(id)
+    
+    return user_deleted
