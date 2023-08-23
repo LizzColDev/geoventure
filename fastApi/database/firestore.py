@@ -8,9 +8,9 @@ firebase_admin.initialize_app(cred)
 
 db = firestore.client()
 
-def add_user_data(user_data):
-    users_collection = db.collection("users")
-    document_reference = users_collection.add(user_data)
+def add_data(data, collection):
+    users_collection = db.collection(collection)
+    document_reference = users_collection.add(data)
     return document_reference
 
 def get_users_data():

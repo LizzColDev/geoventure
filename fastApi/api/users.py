@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.user import NewUser
-from database.firestore import add_user_data, get_users_data, get_user_by_id, delete_user_by_id
+from database.firestore import add_data, get_users_data, get_user_by_id, delete_user_by_id
 
 router = APIRouter()
 
@@ -14,7 +14,7 @@ def create_user(new_user: NewUser):
 
         user_data = {"name": name}
 
-        _, document_reference = add_user_data(user_data)
+        _, document_reference = add_data(user_data, "users")
 
         return {
             "id": document_reference.id,
