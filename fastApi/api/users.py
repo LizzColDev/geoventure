@@ -4,7 +4,7 @@ from database.firestore import add_user_data, get_users_data
 
 router = APIRouter()
 
-@router.post("/")
+@router.post("/user")
 def create_user(new_user: NewUser):
     try:
         name = new_user.name.strip()
@@ -25,7 +25,7 @@ def create_user(new_user: NewUser):
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error creating user from the database.")
     
-@router.get("/")
+@router.get("/users")
 def get_users():
     try:
         user_list = get_users_data()
