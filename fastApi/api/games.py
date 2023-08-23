@@ -1,7 +1,7 @@
 from fastapi import APIRouter, HTTPException
-from database.firestore import add_data, get_data, get_data_by_id, delete_data_by_id
+from database.firestore import add_data, get_data, get_data_by_id, delete_data_by_id, update_data_by_id
 from datetime import datetime
-from models.game import NewGame
+from models.game import NewGame, UpdateGameData
 
 router = APIRouter()
 
@@ -45,4 +45,18 @@ def delete_game(game_id: str):
   game_deleted = delete_data_by_id(id, "games")
 
   return game_deleted
+  
+@router.patch("/game/{game_id}", status_code=201)
+def update_game(game_id: str, game_data: UpdateGameData):
+  id = game_id.strip()
+
+  data = {
+    "guessedLocation": {
+      "latitude": game_data.guessedLocation.latitude,
+      "longitude": game_data.guessedLocation.longitude
+    }
+  }
+  game_update = update_data_by_id(id, "games", data)
+
+  return game_update
   
