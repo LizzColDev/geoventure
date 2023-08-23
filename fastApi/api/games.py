@@ -5,7 +5,7 @@ from models.game import NewGame, UpdateGameData
 
 router = APIRouter()
 
-@router.post("/game")
+@router.post("/game", status_code=201)
 def create_game(user_id: NewGame):
   id = user_id.userId.strip()
   current_time = datetime.now().timestamp() * 1000
@@ -38,7 +38,7 @@ def get_game(game_id: str):
 
     return game_data
 
-@router.delete("/game/{game_id}")
+@router.delete("/game/{game_id}", status_code=204)
 def delete_game(game_id: str):
   id = game_id.strip()
 
@@ -59,4 +59,3 @@ def update_game(game_id: str, game_data: UpdateGameData):
   game_update = update_data_by_id(id, "games", data)
 
   return game_update
-  

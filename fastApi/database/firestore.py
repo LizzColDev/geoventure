@@ -44,7 +44,6 @@ def delete_data_by_id(id, collection):
 
     ref.delete()
 
-    return {"message": f"Document with ID {id} deleted from {collection} collection."}
     
 def update_data_by_id(id, collection, data):
     ref = db.collection(collection).document(id)

@@ -4,7 +4,7 @@ from database.firestore import add_data, get_data, get_data_by_id, delete_data_b
 
 router = APIRouter()
 
-@router.post("/user")
+@router.post("/user", status_code=201)
 def create_user(new_user: NewUser):
     try:
         name = new_user.name.strip()
@@ -47,7 +47,7 @@ def get_user(user_id: str):
     return user_data
 
 
-@router.delete("/user/{user_id}")
+@router.delete("/user/{user_id}", status_code=204)
 def delete_user(user_id: str):
     id = user_id.strip()
     user_deleted = delete_data_by_id(id, "users")
