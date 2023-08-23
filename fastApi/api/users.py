@@ -28,7 +28,7 @@ def create_user(new_user: NewUser):
 @router.get("/users")
 def get_users():
     try:
-        user_list = get_data("users")
+        user_list = get_data("users", id_key="id")
         
         if not user_list:
              raise HTTPException(status_code=404, detail="Not users found.")

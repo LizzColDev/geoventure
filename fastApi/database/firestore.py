@@ -13,18 +13,15 @@ def add_data(data, collection):
     document_reference = users_collection.add(data)
     return document_reference
 
-def get_data(collection):
-    try:
-        users_docs = db.collection(collection).stream()
-        user_list = []
-        for user in users_docs:
-            user_data = user.to_dict()
-            user_dict = {"id": user.id, "name": user_data.get("name")}
-            user_list.append(user_dict)
-        return user_list
-    except Exception as e:
-        raise HTTPException(status_code=500, detail="Error retrieving users data from the database.")
-    
+def get_data(collection, id_key):
+    docs = db.collection(collection).stream()
+    data_list = []
+    for doc in docs:
+        doc_data = doc.to_dict()
+        data_dict = {"id": doc.id, **doc_data}
+        data_list.append(data_dict)
+    return data_list
+   
 def get_data_by_id(id, collection):
     try:
         user_doc = db.collection(collection).document(id).get()
