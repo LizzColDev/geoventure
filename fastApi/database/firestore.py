@@ -14,13 +14,17 @@ def add_user_data(user_data):
     return document_reference
 
 def get_users_data():
-    users_docs = db.collection("users").stream()
+    try:
+        users_docs = db.collection("users").stream()
 
-    user_list = []
-    for user in users_docs:
-        user_data = user.to_dict()
-        user_dict = {"id": user.id, "name": user_data.get("name")}
-        user_list.append(user_dict)
-        print(user_list)
-    return user_list
+        user_list = []
+        for user in users_docs:
+            user_data = user.to_dict()
+            user_dict = {"id": user.id, "name": user_data.get("name")}
+            user_list.append(user_dict)
+            print(user_list)
+        return user_list
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error creating user.")
+    
     

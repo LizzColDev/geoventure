@@ -6,17 +6,38 @@ router = APIRouter()
 
 @router.post("/")
 def create_user(new_user: NewUser):
-    user_data = {"name": new_user.name.strip()}
-    
-    _, document_reference = add_user_data(user_data)
+    try:
+        name = new_user.name.strip()
 
-    return {
-        "id": document_reference.id,
-        **user_data
-    }
+        if not name:
+            raise HTTPException(status_code=422, detail="Invalid name. Name must be a non-empty string.")
+
+        user_data = {"name": name}
+
+        _, document_reference = add_user_data(user_data)
+
+        return {
+            "id": document_reference.id,
+            **user_data
+        }
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error creating user from the database.")
     
 @router.get("/")
 def get_users():
-    return get_users_data()
+    try:
+        user_list = get_users_data()
+        
+        if not user_list:
+             raise HTTPException(status_code=404, detail="Not users found.")
+        
+        return user_list
+    except HTTPException as http_exc:
+        raise http_exc
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error retrieving users data from the database.")
+    
 
     
