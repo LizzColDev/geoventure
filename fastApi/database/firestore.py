@@ -22,9 +22,15 @@ def get_users_data():
             user_data = user.to_dict()
             user_dict = {"id": user.id, "name": user_data.get("name")}
             user_list.append(user_dict)
-            print(user_list)
-        return user_list
+            return user_list
     except Exception as e:
-        raise HTTPException(status_code=500, detail="Error creating user.")
+        raise HTTPException(status_code=500, detail="Error retrieving users data from the database.")
     
-    
+def get_user_by_id(user_id):
+    try:
+        user_doc = db.collection("users").document(user_id).get()
+
+        return user_doc
+    except Exception as e:
+        raise HTTPException(status_code=500, detail="Error retrieving user data from the database.")
+        
