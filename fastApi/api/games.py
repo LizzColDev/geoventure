@@ -1,5 +1,5 @@
 from fastapi import APIRouter, HTTPException
-from database.firestore import add_data, get_data
+from database.firestore import add_data, get_data, get_data_by_id
 from datetime import datetime
 from models.game import NewGame
 
@@ -30,4 +30,11 @@ def get_games():
     raise HTTPException(status_code=404, detail="Not games found.")
 
   return games_list
-  
+
+@router.get("/game/{game_id}")
+def get_game(game_id: str):
+    id = game_id.strip()
+    game_data = get_data_by_id(id, "games")
+
+    return game_data
+
