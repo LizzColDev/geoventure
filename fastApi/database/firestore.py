@@ -13,9 +13,9 @@ def add_data(data, collection):
     document_reference = users_collection.add(data)
     return document_reference
 
-def get_users_data():
+def get_data(collection):
     try:
-        users_docs = db.collection("users").stream()
+        users_docs = db.collection(collection).stream()
         user_list = []
         for user in users_docs:
             user_data = user.to_dict()
@@ -25,16 +25,16 @@ def get_users_data():
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error retrieving users data from the database.")
     
-def get_user_by_id(user_id):
+def get_data_by_id(id, collection):
     try:
-        user_doc = db.collection("users").document(user_id).get()
+        user_doc = db.collection(collection).document(id).get()
 
         return user_doc
     except Exception as e:
         raise HTTPException(status_code=500, detail="Error retrieving user data from the database.")
 
-def delete_user_by_id(user_id):
-    user_ref = db.collection("users").document(user_id)
+def delete_data_by_id(id, collection):
+    user_ref = db.collection(collection).document(id)
     user_doc = user_ref.get()
 
     if not user_doc.exists: 
@@ -42,4 +42,4 @@ def delete_user_by_id(user_id):
 
     user_ref.delete()
 
-    return {"message": f"User with ID {user_id} deleted."}
+    return {"message": f"User with ID {id} deleted."}

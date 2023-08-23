@@ -1,6 +1,6 @@
 from fastapi import APIRouter, HTTPException
 from models.user import NewUser
-from database.firestore import add_data, get_users_data, get_user_by_id, delete_user_by_id
+from database.firestore import add_data, get_data, get_data_by_id, delete_data_by_id
 
 router = APIRouter()
 
@@ -28,7 +28,7 @@ def create_user(new_user: NewUser):
 @router.get("/users")
 def get_users():
     try:
-        user_list = get_users_data()
+        user_list = get_data("users")
         
         if not user_list:
              raise HTTPException(status_code=404, detail="Not users found.")
@@ -43,7 +43,7 @@ def get_users():
 def get_user(user_id: str):
     try:
         id = user_id.strip()
-        user_doc = get_user_by_id(id)
+        user_doc = get_data_by_id(id, "users")
 
         user_data = user_doc.to_dict()
 
@@ -61,6 +61,6 @@ def get_user(user_id: str):
 @router.delete("/user/{user_id}")
 def delete_user(user_id: str):
     id = user_id.strip()
-    user_deleted = delete_user_by_id(id)
+    user_deleted = delete_data_by_id(id, "users")
     
     return user_deleted
