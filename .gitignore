@@ -4,6 +4,7 @@
 # Ignore build output directories
 /build
 **/dist
+**/coverage
 
 # Ignore environment files (these should not be committed)
 .env
@@ -224,3 +225,4 @@ pyrightconfig.json
 
 key.json
 coverage
+**/key.json

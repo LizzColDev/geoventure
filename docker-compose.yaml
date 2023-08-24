@@ -1,5 +1,6 @@
 version: '3.9'
 services:
+
   fastapi:
     build:
       context: ./fastApi
@@ -9,3 +10,13 @@ services:
       - "8000:8000"
     volumes:
       - .:/fastApi:ro
+
+  backend:
+    build:
+      context: ./backend
+      dockerfile: Dockerfile
+    container_name: geoventure-backend-app
+    environment:
+      - FIREBASE_KEY_JSON_PATH=./key.json
+    ports:
+      - "3000:3000"

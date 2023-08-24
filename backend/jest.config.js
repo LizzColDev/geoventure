@@ -2,6 +2,7 @@
 module.exports = {
   preset: 'ts-jest',
   testEnvironment: 'node',
-  testMatch: ['**/dist/tests/*.test.js'], // Adjust the pattern based on your test file location
-  modulePaths: ['*/dist/src/'],
+  testMatch: ['**/tests/*.test.ts', '**/tests/**/*.test.ts'], // Adjust the pattern based on your test file location
+  modulePaths: ['*/src'],
+  collectCoverage: true
 };
