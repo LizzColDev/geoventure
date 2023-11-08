@@ -5,13 +5,12 @@ export const createFirebaseMock = () => ({
   },
   initializeApp: jest.fn(),
   firestore: () => ({
-    collection: () => ({
-      add: addMock,
-      get: getMock,
+    collection: (collectionName: string) => ({
+      add: collectionName === "users" ? addMock : addGameMock,
+      get: collectionName === "users" ? getMock : getMock,
       doc: (docId: string) => ({
         get: getUserByIdMock.bind(null, docId),
         delete: deleteMock,
-        set: addGameMock,
       }),
     }),
   }),
@@ -52,4 +51,6 @@ export const getUserByIdMock =  jest.fn(async (userId: string) => {
 
 export const deleteMock = jest.fn(() => Promise.resolve());
 
-export const addGameMock = jest.fn(() => Promise.resolve());
+export const addGameMock = jest.fn(() => {
+  return Promise.resolve({ id: "idTestGame", userId: "user1", initialTime: 12345 });
+});

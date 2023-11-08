@@ -8,6 +8,7 @@ import {
   getMock,
 } from "./firebaseMock";
 import { createGame } from "../../src/controllers/gamesController";
+
 let req: Request;
 let res: Response;
 let next: NextFunction;
@@ -19,7 +20,9 @@ jest.mock("firebase-admin", () => {
 
 describe("Games Controller - POST /games", () => {
   let mockUserId = "user1";
+  const mockGameId = "idTestGame";
   const mockTimestamp = expect.any(Number);
+  
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -40,22 +43,26 @@ describe("Games Controller - POST /games", () => {
     jest.clearAllMocks();
   });
 
-  it("Should create a new game in firestore", async () => {
+  it("Should create a new game in firestore with valid userId", async () => {
     await createGame(req, res, next);
 
     expect(res.status).toHaveBeenCalledWith(201);
     expect(res.send).toHaveBeenCalledWith(
+      expect.objectContaining({ 
+        userId: mockUserId,
+        gameId: mockGameId,
+        initialTime: mockTimestamp,
+      })
+    );
+    
+    expect(addGameMock).toHaveBeenCalledWith(
       expect.objectContaining({
         userId: mockUserId,
         initialTime: mockTimestamp,
       })
     );
-    expect(addGameMock).toHaveBeenCalledWith({
-      userId: mockUserId,
-      initialTime: mockTimestamp,
-    });
 
-    expect(getUserByIdMock).not.toHaveBeenCalled();
+    expect(getUserByIdMock).toHaveBeenCalledWith(mockUserId);
     expect(deleteMock).not.toHaveBeenCalled();
     expect(addMock).not.toHaveBeenCalled();
     expect(getMock).not.toHaveBeenCalled();
