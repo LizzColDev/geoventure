@@ -35,11 +35,16 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
     };
 
     const gameRef = await db.collection("games").add(gameData);
+    if (!gameRef.id) {
+      return next(
+        createError(500, "Error creating the game. Please try again.")
+      );
+    }
     res.status(201).send({
       gameId: gameRef.id,
       ...gameData,
     });
-
+    console.log(`Game created successfully - Game ID: ${gameRef.id}`);
   } catch (error) {
     next(error);
   }
