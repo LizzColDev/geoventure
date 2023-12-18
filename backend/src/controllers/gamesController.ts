@@ -49,3 +49,28 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
     next(error);
   }
 };
+
+export const getGames =async (req:Request, res: Response, next: NextFunction) => {
+  try {
+    const gameRef = await db.collection('games').get();
+    
+    const gamesData: any[] = [];
+
+    gameRef.forEach((gameDoc) => {
+
+      gamesData.push({ id: gameDoc.id, ...gameDoc.data()
+      
+      })
+    });
+
+    if (gamesData.length === 0 ) {
+      return next(
+        createError(404, "Not games found.")
+      )
+    }
+    return res.status(200).json(gamesData);
+  } catch (error) {
+    next(error);
+  }
+}
+
