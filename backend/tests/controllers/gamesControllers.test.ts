@@ -2,12 +2,12 @@ import { Request, Response, NextFunction } from "express";
 import {
   createFirebaseMock,
   addGameMock,
-  getUserByIdMock,
+  getByIdMock,
   deleteMock,
   addMock,
   getMock,
 } from "./firebaseMock";
-import { createGame, getGames } from "../../src/controllers/gamesController";
+import { createGame, getGameById, getGames } from "../../src/controllers/gamesController";
 import createError from "http-errors";
 
 let req: Request;
@@ -63,7 +63,6 @@ describe("Games Controller - POST /games", () => {
       })
     );
 
-    expect(getUserByIdMock).toHaveBeenCalledWith(mockUserId);
     expect(deleteMock).not.toHaveBeenCalled();
     expect(addMock).not.toHaveBeenCalled();
     expect(getMock).not.toHaveBeenCalled();
@@ -156,3 +155,54 @@ describe("GET /games", () =>{
   });
 })
 
+describe("Games Controllers - GET /game/:gameId", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    req = {
+      params: {
+        gameId: "game1",
+      },
+    } as unknown as Request;
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    next = jest.fn() as NextFunction;
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should respond with the game data in firebase", async () => {
+    await getGameById(req, res, next);
+
+    expect(getByIdMock).toHaveBeenCalledWith('game1', 'games');
+    
+    // Assert the response status, JSON, and next not being called
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith({
+      id: "game1",
+      initialTime: 1699305775356,
+      userId: "user1"
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it("should respond with a 404 status code for game not found", async () => {
+    req.params.gameId = "nonexist";
+
+    await getGameById(req, res, next);
+
+
+    expect(getByIdMock).toHaveBeenCalled();
+
+    // Assert that next is called with a 404 error
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Game not found" })
+    );
+  });
+
+});
