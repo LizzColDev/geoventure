@@ -77,3 +77,10 @@ The backend server will be accessible at `http://localhost:3000/`.
 ### [DELETE /users/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88))
 
 [Click here](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88) to view the API endpoint configuration.
+
+
+## Games
+
+### [POST /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/8c97efb83981a0a9fc02dd43579d97b944b9938d/docs/api-endpoints.yaml#L117))
+
+[Click here](https://github.com/LizzColDev/geoventure/blob/8c97efb83981a0a9fc02dd43579d97b944b9938d/docs/api-endpoints.yaml#L117) to view the API endpoint configuration.

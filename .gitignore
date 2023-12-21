@@ -45,6 +45,8 @@ firebase-adminsdk*.json
 .cache/
 firebase-debug.log
 
+**/key.json
+
 # Created by https://www.toptal.com/developers/gitignore/api/python
 # Edit at https://www.toptal.com/developers/gitignore?templates=python
 
@@ -86,7 +88,9 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
 get-pip.py
+
 # Unit test / coverage reports
 htmlcov/
 .tox/
@@ -220,9 +224,9 @@ poetry.lock
 
 # LSP config files
 pyrightconfig.json
-
 # End of https://www.toptal.com/developers/gitignore/api/python
 
 key.json
 coverage
 **/key.json
+

@@ -1,11 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
-import * as admin from "firebase-admin";
-import * as serviceAccount from '../../key.json';
-
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccount as admin.ServiceAccount),
-});
+import admin from "../../config/firebase";
 
 const db = admin.firestore();
 
