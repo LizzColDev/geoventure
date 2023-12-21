@@ -34,9 +34,6 @@ Thumbs.db
 # Ignore Firebase configuration files
 firebase-adminsdk*.json
 
-# Ignore Docker files (assuming Dockerfile is in the root of the project)
-.dockerignore
-
 # Ignore any built Docker images
 *.docker
 
@@ -49,6 +46,9 @@ firebase-adminsdk*.json
 firebase-debug.log
 
 **/key.json
+
+# Created by https://www.toptal.com/developers/gitignore/api/python
+# Edit at https://www.toptal.com/developers/gitignore?templates=python
 
 ### Python ###
 # Byte-compiled / optimized / DLL files
@@ -88,6 +88,8 @@ MANIFEST
 # Installer logs
 pip-log.txt
 pip-delete-this-directory.txt
+
+get-pip.py
 
 # Unit test / coverage reports
 htmlcov/
@@ -222,5 +224,9 @@ poetry.lock
 
 # LSP config files
 pyrightconfig.json
-
 # End of https://www.toptal.com/developers/gitignore/api/python
+
+key.json
+coverage
+**/key.json
+
