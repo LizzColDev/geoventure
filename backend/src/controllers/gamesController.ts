@@ -74,3 +74,20 @@ export const getGames =async (req:Request, res: Response, next: NextFunction) =>
   }
 }
 
+export const getGameById =async (req:Request, res: Response, next: NextFunction) => {
+  
+  try {
+    const gameId = req.params.gameId;
+    const gameDoc = await db.collection('games').doc(gameId).get();
+
+    if (!gameDoc.exists) {
+      return next(createError(404, "Game not found."));
+    };
+
+    const gameData = gameDoc.data();
+    return res.status(200).json({id: gameDoc.id, ...gameData})
+
+  } catch (error) {
+    next(error);
+  }
+}
