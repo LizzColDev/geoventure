@@ -7,7 +7,7 @@ import {
   addMock,
   getMock,
 } from "./firebaseMock";
-import { createGame } from "../../src/controllers/gamesController";
+import { createGame, getGames } from "../../src/controllers/gamesController";
 import createError from "http-errors";
 
 let req: Request;
@@ -91,3 +91,68 @@ describe("Games Controller - POST /games", () => {
     expect(next).toHaveBeenCalledWith(expectedError);
   });
 });
+
+describe("GET /games", () =>{
+  // Function to create a mock Express response object
+  const mockResponse = (): Response => {
+    const response: Partial<Response> = {};
+    response.status = jest.fn().mockReturnValue(response);
+    response.json = jest.fn();
+    return response as Response;
+  };
+
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    req = {} as Request;
+    res = mockResponse();
+    next = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should respond with an array of all games in firebase",async () => {
+    await getGames(req, res, next);
+
+    // Assert the response status and JSON
+    expect(res.status).toHaveBeenCalledWith(200);
+    expect(res.json).toHaveBeenCalledWith([
+      {
+        id: "gameId1",
+        initialTime: 123,
+        userId: "test user id 1"
+      },
+      {		
+        id: "gameId2",
+        initialTime: 1234,
+        userId: "test user id 2"
+    },
+    ])
+  })
+
+  it("should respond with 404 and an error message when no games exist in firebase", async () => {
+    getMock.mockReturnValueOnce(Promise.resolve({
+      forEach: (callback: Function) => {},
+    }));
+
+    await getGames(req, res, next);
+    expect(next).toHaveBeenCalledWith(
+      createError(404, "Not games found.")
+    );
+
+  });
+  it("should handle errors and call 'next'", async () => {
+    getMock.mockImplementationOnce(() => {
+      throw new Error("Error retrieving game data");
+    });
+
+    await getGames(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Error retrieving game data" })
+    );
+  });
+})
+

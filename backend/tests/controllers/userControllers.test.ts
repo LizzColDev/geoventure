@@ -108,9 +108,9 @@ describe("GET /users", () => {
   });
 
   it("should respond with 404 and an error message when no users exist in firebase", async () => {
-    getMock.mockReturnValueOnce({
+    getMock.mockReturnValueOnce(Promise.resolve({
       forEach: (callback: Function) => {},
-    })
+    }));
 
     await getUsers(req, res, next);
     expect(next).toHaveBeenCalledWith(
