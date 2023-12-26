@@ -11,6 +11,7 @@ export const createFirebaseMock = () => ({
       doc: (docId: string) => ({
         get: getByIdMock.bind(null, docId, collectionName),
         delete: deleteMock,
+        set: updateByIdMock.bind(null, docId),
       }),
     }),
   }),
@@ -85,4 +86,21 @@ export const deleteMock = jest.fn(() => Promise.resolve());
 
 export const addGameMock = jest.fn(() => {
   return Promise.resolve({ id: "idTestGame", userId: "user1", initialTime: 12345 });
+});
+
+export const updateByIdMock = jest.fn( async (docId) => {
+  
+  if(docId){
+    return { 
+      exists: true,
+      id: docId, 
+      data: () => ( {
+        userId: "user1", 
+        initialTime: expect.any(Number), 
+        endTime: expect.any(Number)
+      })
+    };
+  } else {
+    throw new Error(`Game ${docId} not found`);
+  }
 });
