@@ -9,7 +9,7 @@ export const createFirebaseMock = () => ({
       add: collectionName === "users" ? addMock : addGameMock,
       get: getMock.bind(null, collectionName),
       doc: (docId: string) => ({
-        get: getUserByIdMock.bind(null, docId),
+        get: getByIdMock.bind(null, docId, collectionName),
         delete: deleteMock,
       }),
     }),
@@ -59,16 +59,25 @@ export const getMock = jest.fn(async (collectionName) => {
 });
 
 // Creating a mock for Firebase Firestore operations in the context of retrieving user data
-export const getUserByIdMock =  jest.fn(async (userId: string) => {
+export const getByIdMock =  jest.fn(async (userId, collectionName) => {
     // Simulating the behavior of the `get` method to retrieve user data
-    if (userId === "user1") {
+    if (collectionName === "users" && userId === "user1") {
       return {
         exists: true,
         id: userId,
         data: () => ({ name: "Juanita Test" }),
       };
-    } else {
-      throw new Error("User not found");
+    } else if (collectionName === "games" && userId === "game1") {
+      return {
+        exists: true,
+        id: userId,
+        data: () => ({
+          initialTime: 1699305775356,
+          userId: "user1"
+        })
+      }
+    }else {
+      throw new Error(`${collectionName === "users" ? "User" : "Game"} not found`);
     }
   });
 

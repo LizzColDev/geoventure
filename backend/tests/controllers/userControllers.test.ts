@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addMock, createFirebaseMock, deleteMock, getMock, getUserByIdMock } from "./firebaseMock";
+import { addMock, createFirebaseMock, deleteMock, getMock, getByIdMock } from "./firebaseMock";
 import {
   createUser,
   getUserById,
@@ -155,7 +155,7 @@ describe("Users Controllers - GET /users/:userId", () => {
   it("should respond with the user details in firebase", async () => {
     await getUserById(req, res, next);
 
-    expect(getUserByIdMock).toHaveBeenCalledWith('user1');
+    expect(getByIdMock).toHaveBeenCalledWith('user1', 'users');
     
     // Assert the response status, JSON, and next not being called
     expect(res.status).toHaveBeenCalledWith(200);
@@ -172,7 +172,7 @@ describe("Users Controllers - GET /users/:userId", () => {
     await getUserById(req, res, next);
 
 
-    expect(getUserByIdMock).toHaveBeenCalled();
+    expect(getByIdMock).toHaveBeenCalled();
 
     // Assert that next is called with a 404 error
     expect(next).toHaveBeenCalledWith(
@@ -208,8 +208,8 @@ describe("User Controller - DELETE /users/:userId", () => {
 
     await deleteUser(req, res, next);
 
-    // Verify that getUserByIdMock is called
-    expect(getUserByIdMock).toHaveBeenCalledWith('user1');
+    // Verify that getByIdMock is called
+    expect(getByIdMock).toHaveBeenCalledWith('user1', 'users');
 
     // Verify that deleteMock is called
     expect(deleteMock).toHaveBeenCalled();
@@ -230,8 +230,8 @@ describe("User Controller - DELETE /users/:userId", () => {
 
     await deleteUser(req, res, next);
 
-    // Verify that getUserByIdMock is called
-    expect(getUserByIdMock).toHaveBeenCalledWith('nonexistent');
+    // Verify that getByIdMock is called
+    expect(getByIdMock).toHaveBeenCalledWith('nonexistent', 'users');
 
     // Verify that deleteMock is not called
     expect(deleteMock).not.toHaveBeenCalled();
