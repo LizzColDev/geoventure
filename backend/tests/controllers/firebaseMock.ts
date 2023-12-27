@@ -88,8 +88,8 @@ export const addGameMock = jest.fn(() => {
   return Promise.resolve({ id: "idTestGame", userId: "user1", initialTime: 12345 });
 });
 
-export const updateByIdMock = jest.fn( async (docId) => {
-  
+export const updateByIdMock = jest.fn( async (docId, latitude, longitude) => {
+
   if(docId){
     return { 
       exists: true,
@@ -97,7 +97,8 @@ export const updateByIdMock = jest.fn( async (docId) => {
       data: () => ( {
         userId: "user1", 
         initialTime: expect.any(Number), 
-        endTime: expect.any(Number)
+        endTime: expect.any(Number),
+        estimatedLocation: { latitude: latitude, longitude: longitude }
       })
     };
   } else {
