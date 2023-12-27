@@ -96,16 +96,34 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
 
     try {
       const {gameId} = req.params;
-      const gameDoc = await db.collection('games').doc(gameId).get();
+      const { latitude, longitude } = req.body;
+
+      if (
+        !latitude ||
+        !longitude ||
+        typeof latitude !== 'number' ||
+        typeof longitude !== 'number'
+      ) {
+        return next(
+          createError(422, 'Invalid latitude or longitude. Both must be numbers.')
+        );
+      }
+
+
+      const gameRef = db.collection('games').doc(gameId);
+      const gameDoc = await gameRef.get();
       
       if (!gameDoc.exists) {
         return next(createError(404, `Game ${gameId} not found`));
       }
-
+      
       const currentTime = Date.now();     
-      const gameData = {endTime: currentTime, ...gameDoc.data()};
+      const gameData = {
+        endTime: currentTime, 
+        estimatedLocation: { latitude, longitude },
+        ...gameDoc.data()};
 
-      await db.collection('games').doc(gameId).set(gameData)
+      await gameRef.set(gameData)
 
       res.status(201).json({id: gameDoc.id, ...gameData });
 
