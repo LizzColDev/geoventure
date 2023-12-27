@@ -91,3 +91,26 @@ export const getGameById =async (req:Request, res: Response, next: NextFunction)
     next(error);
   }
 }
+
+export const updateGameById =async (req:Request, res: Response, next: NextFunction) => {
+
+    try {
+      const {gameId} = req.params;
+      const gameDoc = await db.collection('games').doc(gameId).get();
+      
+      if (!gameDoc.exists) {
+        return next(createError(404, `Game ${gameId} not found`));
+      }
+
+      const currentTime = Date.now();     
+      const gameData = {endTime: currentTime, ...gameDoc.data()};
+
+      await db.collection('games').doc(gameId).set(gameData)
+
+      res.status(201).json({id: gameDoc.id, ...gameData });
+
+      console.log(`Game updated successfully - Game ID: ${gameDoc.id}`);
+    } catch (error) {
+      next(error);
+    }
+}
