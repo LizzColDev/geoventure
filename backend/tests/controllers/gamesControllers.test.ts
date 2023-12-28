@@ -6,8 +6,9 @@ import {
   deleteMock,
   addMock,
   getMock,
+  updateByIdMock,
 } from "./firebaseMock";
-import { createGame, getGameById, getGames } from "../../src/controllers/gamesController";
+import { createGame, getGameById, getGames, updateGameById } from "../../src/controllers/gamesController";
 import createError from "http-errors";
 
 let req: Request;
@@ -205,4 +206,87 @@ describe("Games Controllers - GET /game/:gameId", () => {
     );
   });
 
+});
+
+describe("Games Controllers - PATCH /game/:gameId", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    req = {
+      params: {
+        gameId: "game1",
+      },
+      body: { latitude: 40.7128, longitude: -74.0060 },
+    } as unknown as Request;
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    next = jest.fn() as NextFunction;
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should respond with the updated game data", async () => {
+    await updateGameById(req, res, next);
+    const { latitude, longitude } = req.body;
+    expect(updateByIdMock).toHaveBeenCalledWith(
+      "game1",
+      {
+        "endTime": expect.any(Number), 
+        "estimatedLocation": {"latitude": 40.7128, "longitude": -74.006}, 
+        "initialTime": expect.any(Number), 
+        "userId": "user1"}
+    );
+    
+    // Assert the response status, JSON, and next not being called
+    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.json).toHaveBeenCalledWith({
+      id: "game1", 
+      initialTime: expect.any(Number),
+      endTime: expect.any(Number),
+      userId: "user1",
+      estimatedLocation: { latitude, longitude } 
+    });
+    expect(next).not.toHaveBeenCalled();
+  });
+
+  it('should handle invalid latitude or longitude', async () => {
+    // Test data with invalid coordinates
+    const req: any = { params: { gameId: 'game1' }, body: {} };
+
+    const res: any = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    };
+    const next = jest.fn();
+  
+    // Function call
+    await updateGameById(req, res, next);
+  
+    // Verification of function calls and results
+    expect(next).toHaveBeenCalledWith(expect.any(Error));
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+  });
+  
+  it('should handle game not found error', async () => {
+    getByIdMock.mockImplementationOnce(async () => ({
+      exists: false,
+      id: null,
+      data: () => ({
+        initialTime: 0,
+        userId: '',
+      }),
+    }));
+
+    await updateGameById(req as Request, res as Response, next);
+
+    expect(next).toHaveBeenCalledWith(expect.any(createError.NotFound));
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.json).not.toHaveBeenCalled();
+  });
 });

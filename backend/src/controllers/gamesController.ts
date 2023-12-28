@@ -91,3 +91,44 @@ export const getGameById =async (req:Request, res: Response, next: NextFunction)
     next(error);
   }
 }
+
+export const updateGameById =async (req:Request, res: Response, next: NextFunction) => {
+
+    try {
+      const {gameId} = req.params;
+      const { latitude, longitude } = req.body;
+
+      if (
+        !latitude ||
+        !longitude ||
+        typeof latitude !== 'number' ||
+        typeof longitude !== 'number'
+      ) {
+        return next(
+          createError(422, 'Invalid latitude or longitude. Both must be numbers.')
+        );
+      }
+
+
+      const gameRef = db.collection('games').doc(gameId);
+      const gameDoc = await gameRef.get();
+      
+      if (!gameDoc.exists) {
+        return next(createError(404, `Game ${gameId} not found`));
+      }
+      
+      const currentTime = Date.now();     
+      const gameData = {
+        endTime: currentTime, 
+        estimatedLocation: { latitude, longitude },
+        ...gameDoc.data()};
+
+      await gameRef.set(gameData)
+
+      res.status(201).json({id: gameDoc.id, ...gameData });
+
+      console.log(`Game updated successfully - Game ID: ${gameDoc.id}`);
+    } catch (error) {
+      next(error);
+    }
+}
