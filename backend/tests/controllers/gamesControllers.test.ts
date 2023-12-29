@@ -8,7 +8,7 @@ import {
   getMock,
   updateByIdMock,
 } from "./firebaseMock";
-import { createGame, getGameById, getGames, updateGameById } from "../../src/controllers/gamesController";
+import { createGame, getGameById, getGames, updateGameById, deleteGameById } from "../../src/controllers/gamesController";
 import createError from "http-errors";
 
 let req: Request;
@@ -288,5 +288,70 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
     expect(next).toHaveBeenCalledWith(expect.any(createError.NotFound));
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
+  });
+});
+
+describe("Game Controller - DELETE /games/:gameId", () => {
+  beforeEach(() => {
+    jest.clearAllMocks();
+
+    req = {
+      params: {},
+      body: {},
+    } as unknown as Request;
+
+    res = {
+      status: jest.fn().mockReturnThis(),
+      json: jest.fn(),
+    } as unknown as Response;
+
+    next = jest.fn();
+  });
+
+  afterEach(() => {
+    jest.clearAllMocks();
+  });
+
+  it("should delete a user in Firebase with valid data", async () => {
+    req.params.gameId = "game1";
+
+    await deleteGameById(req, res, next);
+
+    // Verify that getByIdMock is called
+    expect(getByIdMock).toHaveBeenCalledWith('game1', 'games');
+
+    // Verify that deleteMock is called
+    expect(deleteMock).toHaveBeenCalled();
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+    expect(next).not.toHaveBeenCalled();
+    // Assert the response status and JSON
+    expect(res.status).toHaveBeenCalledWith(204);
+    expect(res.json).toHaveBeenCalledWith(
+      expect.objectContaining({ id: "game1"})
+    );
+  });
+
+  it("should respond with 404 status for non-existent user", async () => {
+    req.params.gameId = "nonexistent";
+
+    await deleteGameById(req, res, next);
+
+    // Verify that getByIdMock is called
+    expect(getByIdMock).toHaveBeenCalledWith('nonexistent', 'games');
+
+    // Verify that deleteMock is not called
+    expect(deleteMock).not.toHaveBeenCalled();
+    
+    // Verify that methods that shouldn't be called are not called
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+
+    // Assert that next is called with a 404 error
+    expect(next).toHaveBeenCalledWith(
+      expect.objectContaining({ message: "Game not found" })
+    );
   });
 });

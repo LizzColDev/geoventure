@@ -132,3 +132,22 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
       next(error);
     }
 }
+
+export const deleteGameById =async (req: Request, res: Response, next: NextFunction) => {
+  try {
+    const gameId = req.params.gameId;
+    const gameRef = db.collection("games").doc(gameId);
+    const gameDoc = await gameRef.get()
+
+    if (!gameDoc.exists) {
+      throw createError(404, "Game not found.");
+    }
+
+    await gameRef.delete();
+    res.status(204).json({
+      id: gameId,
+    });
+  } catch (error) {
+    next(error);
+  }  
+}
