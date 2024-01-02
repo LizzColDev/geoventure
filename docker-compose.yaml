@@ -15,10 +15,13 @@ services:
     build:
       context: ./backend
       dockerfile: Dockerfile
+    command: npm run dev
     container_name: geoventure-backend-app
     environment:
       - FIREBASE_KEY_JSON_PATH=./key.json
     ports:
       - "3000:3000"
     volumes:
-      - ./backend:/app/backend:rw
+      - ./backend:/app:rw
+      - /app/node_modules
+      - /app/dist
