@@ -9,7 +9,7 @@ services:
     ports:
       - "8000:8000"
     volumes:
-      - ./fastApi:/app/fastApi:rw
+      - ./fastApi:/app:rw
 
   backend:
     build:
