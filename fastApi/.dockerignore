@@ -21,3 +21,5 @@ poetry.lock
 
 # Exclude the Dockerignore file itself
 .dockerignore
+
+key.json

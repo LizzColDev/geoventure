@@ -6,10 +6,13 @@ services:
       context: ./fastApi
       dockerfile: Dockerfile
     container_name: fastapi-app
+    environment:
+      - GOOGLE_APPLICATION_CREDENTIALS=/app/key.json
     ports:
       - "8000:8000"
     volumes:
       - ./fastApi:/app:rw
+      - ./fastApi/key.json:/app/key.json:ro
 
   backend:
     build:
