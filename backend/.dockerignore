@@ -1,0 +1,25 @@
+# Exclude common Node.js files and directories
+node_modules/
+npm-debug.log
+
+# Exclude TypeScript-related files
+*.tsbuildinfo
+*.js.map
+
+# Exclude any temporary or build files
+*.swp
+*.log
+*.tmp
+
+# Exclude IDE-specific files
+.vscode/
+.idea/
+
+# Exclude any local development files
+.env
+
+# Exclude the Dockerignore file itself
+.dockerignore
+
+# Exclude sensitive files
+key.json
