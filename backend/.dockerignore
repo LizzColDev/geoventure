@@ -1,11 +1,10 @@
-# Exclude common Python files and directories
-__pycache__
-*.pyc
-*.pyo
+# Exclude common Node.js files and directories
+node_modules/
+npm-debug.log
 
-# Exclude Poetry-related files
-poetry.lock
-.venv
+# Exclude TypeScript-related files
+*.tsbuildinfo
+*.js.map
 
 # Exclude any temporary or build files
 *.swp
@@ -22,4 +21,5 @@ poetry.lock
 # Exclude the Dockerignore file itself
 .dockerignore
 
+# Exclude sensitive files
 key.json
