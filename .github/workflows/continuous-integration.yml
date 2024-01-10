@@ -1,0 +1,33 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - dev
+
+jobs:
+  build:
+
+    runs-on: ubuntu-latest
+
+    steps:
+    - name: Checkout code
+      uses: actions/checkout@v4
+
+    - name: Setup Node.js
+      uses: actions/setup-node@v4
+      with:
+        node-version: '19.4.0'
+        cache: npm
+
+    - name: Install Node.js dependencies
+      run: npm install
+      working-directory: ./backend
+
+    - name: Run Node.js lint script
+      run: npm run lint
+      working-directory: ./backend
+
+    - name: Run Node.js test scripts using Jest
+      run: npm test
+      working-directory: ./backend
