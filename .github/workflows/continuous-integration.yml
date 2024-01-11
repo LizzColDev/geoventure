@@ -8,13 +8,17 @@ on:
 
 jobs:
   build:
-
     runs-on: ubuntu-latest
 
     steps:
-      
       - name: Unlock npm cache
         run: npm cache verify
+
+      - name: Print npm version
+        run: npm --version
+
+      - name: Clean npm cache
+        run: npm cache clean --force
 
       - name: Checkout code
         uses: actions/checkout@v4
@@ -26,13 +30,16 @@ jobs:
           cache: npm
 
       - name: Install Node.js dependencies
-        run: npm install
-        working-directory: ./backend
+        run: |
+          cd ./backend
+          npm install
 
       - name: Run Node.js lint script
-        run: npm run lint
-        working-directory: ./backend
+        run: |
+          cd ./backend
+          npm run lint
 
       - name: Run Node.js test scripts using Jest
-        run: npm test
-        working-directory: ./backend
+        run: |
+          cd ./backend
+          npm test
