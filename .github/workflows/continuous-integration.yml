@@ -29,15 +29,15 @@ jobs:
           node-version: '19.4.0'
           cache: npm
 
+      - name: List files in working directory
+        run: ls -R
+        working-directory: ./backend
+
       - name: Install Node.js dependencies
         run: |
           cd ./backend
           npm install
-      
-      - name: List files in working directory
-        run: ls -R
-        working-directory: ./backend
-        
+
       - name: Run Node.js lint script
         run: |
           cd ./backend
