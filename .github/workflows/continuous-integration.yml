@@ -33,7 +33,11 @@ jobs:
         run: |
           cd ./backend
           npm install
-
+      
+      - name: List files in working directory
+        run: ls -R
+        working-directory: ./backend
+        
       - name: Run Node.js lint script
         run: |
           cd ./backend
