@@ -19,6 +19,7 @@ jobs:
         with:
           node-version: '19.4.0'
           cache: npm
+          cache-dependency-path: ./backend
 
       - name: Update npm
         run: npm install -g npm@9.2.0
