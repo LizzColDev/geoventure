@@ -3,7 +3,7 @@ name: Continuous Integration
 on:
   push:
     branches:
-      - feature/linting-ci
+      - dev
   workflow_dispatch:
 
 jobs:
