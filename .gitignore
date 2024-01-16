@@ -225,4 +225,5 @@ pyrightconfig.json
 key.json
 coverage
 **/key.json
+**/firebase-credentials.json
 
