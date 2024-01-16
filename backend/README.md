@@ -2,7 +2,16 @@
 
 This repository contains the backend code for the Geoventure Game application. The backend is built with Node.js, Express, TypeScript, and integrated with Docker Compose for easy deployment. The backend implements the game logic, handles API endpoints, and interacts with the Firestore database.
 
-## Getting Started
+## Table of Contents
+
+1. [Installation](#installation)
+2. [Configuration](#configuration)
+   - [Development Tools and Best Practices](#development-tools-and-best-practices)
+   - [Credentials Configuration](#credentials-configuration)
+   - [Running GitHub Actions Locally](#running-github-actions-locally)
+   - [Docker Compose](#docker-compose)
+3. [Development](#development)
+4. [API Endpoints](#api-endpoints)
 
 ### Prerequisites
 
@@ -26,7 +35,78 @@ npm install
 
 3. Set up Firebase (Firestore) credentials:
 
-- Create a key.json file with your Firebase service account credentials in the backend directory.
+- Create a `key.json` file with your Firebase service account credentials in the backend directory.
+
+### Configuration
+
+## Development Tools and Best Practices
+
+This project follows best development practices and utilizes the following tools to ensure clean code and efficient continuous integration:
+
+- ESLint: Configured with TypeScript plugins and recommended rules.
+- Prettier: Integrated for consistent code formatting.
+- Husky: Configured to run linting and formatting before each commit.
+- GitHub Actions: A "Continuous Integration" workflow is set up to perform linting and automatic testing on each push.
+
+## Credentials Configuration
+
+To run certain aspects of this project, such as tests or actions related to Firebase, it is necessary to configure the corresponding credentials. Follow these steps to add Firebase credentials as a secret in GitHub.
+
+### 1. Generate Firebase Credentials:
+
+Ensure you have Firebase credentials in a file named `key.json`. Let's assume this file is in the root of your project.
+
+### 2. Create a Temporary File with Your Credentials:
+
+Create a temporary file named `firebase-credentials.json` with the content of your credentials. Use the following command in your terminal:
+
+```bash
+cp key.json firebase-credentials.json
+```
+
+### 3. Set the Secret in GitHub:
+Now, use GitHub CLI (`gh`) to set the secret on GitHub. Make sure you are in the project directory.
+
+```bash
+gh secret set FIREBASE_CREDENTIALS -b "$(cat firebase-credentials.json)"
+```
+In this step, `"$(cat firebase-credentials.json)"` takes the content from the temporary file and uses it to set the secret on GitHub.
+
+### 4. Create a `.env` File:
+
+Create a file named `.env` in the root of your project and add the path to the `key.json` file. This prevents direct exposure of credentials in the code. Make sure to add `.env` to the `.gitignore` file to avoid committing it to the repository.
+
+Content of `.env`:
+```bash
+FIREBASE_CREDENTIALS_PATH=./key.json
+```
+With these steps, you will have created a secret on GitHub named `FIREBASE_CREDENTIALS` with the content of your `key.json` file. The idea is to create a temporary file to avoid directly exposing your credentials on the command line and use an `.env` file to manage the path to the `key.json` file.
+
+## Running GitHub Actions Locally
+
+To run GitHub Actions locally and simulate the "Continuous Integration" workflow, follow these steps:
+
+### 1. Install and Configure Act:
+```bash
+brew install act
+```
+
+### 2. Run the Workflow:
+```bash
+act -j Continuous\ Integration
+```
+Note: This step will require the prior setup of the [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) necessary in your local environment.
+
+## Docker Compose
+
+To build and run the backend using Docker Compose, follow these steps:
+
+1. Build and run the Docker container:
+
+```bash
+docker-compose up --build
+```
+The backend server will be accessible at `http://localhost:3000/`.
 
 ## Development
 
@@ -47,16 +127,22 @@ npm test
 
 The tests are written using Jest and Supertest. Firestore Jest Mock is used to mock Firestore database operations during testing. The TDD approach ensures that the backend functionality is thoroughly tested and robust.
 
-## Docker Compose
+## Linting
 
-To build and run the backend using Docker Compose, follow these steps:
-
-1. Build and run the Docker container:
+Lint the code using ESLint:
 
 ```bash
-docker-compose up --build
+npm run lint
 ```
-The backend server will be accessible at `http://localhost:3000/`.
+
+## Code Formatting
+
+Format the code using ESLint:
+
+```bash
+npm run format
+```
+The pre-commit hook is set up to run linting before each commit.
 
 # API Endpoints
 
