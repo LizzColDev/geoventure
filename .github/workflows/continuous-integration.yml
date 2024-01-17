@@ -1,0 +1,48 @@
+name: Continuous Integration
+
+on:
+  push:
+    branches:
+      - dev
+  workflow_dispatch:
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Set up Node.js
+        uses: actions/setup-node@v3
+        with:
+          node-version: '19.4.0'
+          cache: npm
+          cache-dependency-path: ./backend
+
+      - name: Update npm
+        run: npm install -g npm@9.2.0
+        
+      - name: Print Node.js and npm versions
+        run: |
+            node --version
+            npm --version
+
+      - name: Install Node.js dependencies
+        run: |
+          cd ./backend
+          npm ci --ignore-scripts
+
+      - name: Run Node.js lint script
+        run: |
+          cd ./backend
+          npm run lint
+
+      - name: Run Node.js test scripts using Jest
+        run: |
+          cd ./backend
+          npm test
+        env:
+          FIREBASE_CREDENTIALS: ${{ secrets.FIREBASE_CREDENTIALS }}
+          

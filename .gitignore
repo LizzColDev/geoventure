@@ -27,10 +27,6 @@ yarn-error.log*
 .DS_Store
 Thumbs.db
 
-# Ignore package-lock.json and yarn.lock for frontend and backend
-**/package-lock.json
-**/yarn.lock
-
 # Ignore Firebase configuration files
 firebase-adminsdk*.json
 
@@ -229,4 +225,5 @@ pyrightconfig.json
 key.json
 coverage
 **/key.json
+**/firebase-credentials.json
 

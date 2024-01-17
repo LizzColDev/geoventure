@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import admin from "../../config/firebase";
+import { GameData } from "../types";
 
 const db = admin.firestore();
 
@@ -54,13 +55,12 @@ export const getGames =async (req:Request, res: Response, next: NextFunction) =>
   try {
     const gameRef = await db.collection('games').get();
     
-    const gamesData: any[] = [];
+    const gamesData: GameData[] = [];
 
     gameRef.forEach((gameDoc) => {
 
-      gamesData.push({ id: gameDoc.id, ...gameDoc.data()
+      gamesData.push({ id: gameDoc.id, ...gameDoc.data()} as GameData)
       
-      })
     });
 
     if (gamesData.length === 0 ) {

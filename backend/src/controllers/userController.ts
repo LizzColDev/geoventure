@@ -1,6 +1,7 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import admin from "../../config/firebase";
+import { UserData } from "../types";
 
 const db = admin.firestore();
 
@@ -37,10 +38,10 @@ export const createUser = async (req: Request, res: Response, next: NextFunction
 export const getUsers =async (req:Request, res: Response, next: NextFunction) => {
   try {
     const usersRef = await db.collection('users').get();
-    const usersData: any[] = [];
+    const usersData: UserData [] = [];
     usersRef.forEach((userDoc)=>{
 
-      usersData.push({ id: userDoc.id, ...userDoc.data() });
+      usersData.push({ id: userDoc.id, ...userDoc.data() } as UserData );
     });
 
     if (usersData.length === 0) {
