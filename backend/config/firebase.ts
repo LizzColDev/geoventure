@@ -1,11 +1,30 @@
-import * as admin from 'firebase-admin';
+    import * as path from 'path';
+    import * as admin from 'firebase-admin';
 
-const serviceAccountKey = process.env.FIREBASE_CREDENTIALS
-  ? JSON.parse(process.env.FIREBASE_CREDENTIALS)
-  : undefined;
+    const getFirebaseCredentials = () => {
+      
+      if (process.env.FIREBASE_CREDENTIALS) { 
+        return JSON.parse(process.env.FIREBASE_CREDENTIALS);
+      } else {
+        // Path to the key.json file for GitHub Actions
+        const keyJsonPath = path.resolve(__dirname, '../key.json');
+        
+        try {
+          // Attempt to load from key.json locally
+          return require(keyJsonPath);
+        } catch (error) {
+          console.error(`Error loading Firebase credentials from ${keyJsonPath}:`, error);
+          return null;
+        }
+      }
+    };
 
-admin.initializeApp({
-  credential: admin.credential.cert(serviceAccountKey as admin.ServiceAccount),
-});
+    const serviceAccountKey = getFirebaseCredentials();
 
-export default admin;
+    if (serviceAccountKey) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountKey as admin.ServiceAccount),
+      });
+    }
+
+    export default admin;
