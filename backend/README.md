@@ -86,14 +86,13 @@ With these steps, you will have created a secret on GitHub named `FIREBASE_CREDE
 
 To run GitHub Actions locally and simulate the "Continuous Integration" workflow, follow these steps:
 
-### 1. Install and Configure Act:
-```bash
-brew install act
-```
+### 1. Download and Install Act:
+
+Visit the [act releases page on GitHub](https://github.com/nektos/act/releases) and download the version suitable for your operating system.
 
 ### 2. Run the Workflow:
 ```bash
-act -j Continuous\ Integration
+act -j continuous-integration
 ```
 Note: This step will require the prior setup of the [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) necessary in your local environment.
 
