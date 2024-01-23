@@ -2,6 +2,7 @@ import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
 import admin from "../../config/firebase";
 import { GameData } from "../types";
+import { generateRandomLocation } from "../utils/location/generatedRandomLocation";
 
 const db = admin.firestore();
 
@@ -28,11 +29,13 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
         );
     }
 
+    const randomLocation = generateRandomLocation();
     const currentTime = new Date().getTime()
 
     const gameData = {
       userId: userId,
       initialTime: currentTime,
+      initialLocation: randomLocation,
     };
 
     const gameRef = await db.collection("games").add(gameData);
