@@ -113,8 +113,8 @@ paths:
 
     post:
       tags: 
-        - games
-      summary: Create a new game where the backend will save the Unix time of the request as the initial time of the game.
+        - game
+      summary: Create a new game with the backend saving the Unix time of the request as the initial time and generating a random initial location.
       requestBody:
         required: true
         content:
