@@ -29,13 +29,15 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
         );
     }
 
-    const randomLocation = generateRandomLocation();
+    const randomLocation = await generateRandomLocation();
+    const flatLocation = JSON.parse(JSON.stringify(randomLocation));
+
     const currentTime = new Date().getTime()
 
     const gameData = {
       userId: userId,
       initialTime: currentTime,
-      initialLocation: randomLocation,
+      initialLocation: flatLocation,
     };
 
     const gameRef = await db.collection("games").add(gameData);
