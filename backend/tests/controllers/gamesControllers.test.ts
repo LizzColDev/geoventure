@@ -10,7 +10,8 @@ import {
 } from "./firebaseMock";
 import { createGame, getGameById, getGames, updateGameById, deleteGameById } from "../../src/controllers/gamesController";
 import createError from "http-errors";
-
+import { generateRandomLocation } from "../../src/utils/location/generatedRandomLocation";
+import { UserData } from '../../src/types';
 let req: Request;
 let res: Response;
 let next: NextFunction;
@@ -20,10 +21,15 @@ jest.mock("firebase-admin", () => {
   return firebaseMock;
 });
 
+jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
+  generateRandomLocation: jest.fn(() => ({ latitude: 1, longitude: 2 })),
+}));
+
 describe("Games Controller - POST /games", () => {
-  let mockUserId = "user1";
+  const mockUserId = "user1";
   const mockGameId = "idTestGame";
   const mockTimestamp = expect.any(Number);
+  const mockInitialLocation = generateRandomLocation();
   
   beforeEach(() => {
     jest.clearAllMocks();
@@ -54,6 +60,7 @@ describe("Games Controller - POST /games", () => {
         userId: mockUserId,
         gameId: mockGameId,
         initialTime: mockTimestamp,
+        initialLocation: mockInitialLocation,
       })
     );
     
@@ -61,6 +68,7 @@ describe("Games Controller - POST /games", () => {
       expect.objectContaining({
         userId: mockUserId,
         initialTime: mockTimestamp,
+        initialLocation: mockInitialLocation,
       })
     );
 
@@ -69,6 +77,30 @@ describe("Games Controller - POST /games", () => {
     expect(getMock).not.toHaveBeenCalled();
   });
 
+  it("should handle the case when the user is not found", async () => {
+      const mockUserData: UserData= {
+        exists: false,
+        id: "nonexistent-id",
+        name: "NonExistentUser"
+      };
+
+    const mockDocument = {
+      ...mockUserData,
+      data: jest.fn(() => mockUserData),
+    };
+
+    getByIdMock.mockReturnValueOnce(Promise.resolve(mockDocument));
+    
+    await createGame(req, res, next);
+
+    expect(next).toHaveBeenCalledWith(createError(404, "User not found"));
+    expect(res.status).not.toHaveBeenCalled();
+    expect(res.send).not.toHaveBeenCalled();
+    expect(addGameMock).not.toHaveBeenCalled();
+    expect(deleteMock).not.toHaveBeenCalled();
+    expect(addMock).not.toHaveBeenCalled();
+    expect(getMock).not.toHaveBeenCalled();
+  });
   it("should return 422 status and error message for invalid userId (empty)", async () => {
     req.body.userId = "";
 
