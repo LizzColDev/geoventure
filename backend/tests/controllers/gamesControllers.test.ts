@@ -12,6 +12,7 @@ import { createGame, getGameById, getGames, updateGameById, deleteGameById } fro
 import createError from "http-errors";
 import { generateRandomLocation } from "../../src/utils/location/generatedRandomLocation";
 import { UserData } from '../../src/types';
+import { getStreetViewImage } from "../../src/services/streetviewService";
 let req: Request;
 let res: Response;
 let next: NextFunction;
@@ -25,12 +26,16 @@ jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
   generateRandomLocation: jest.fn(() => ({ latitude: 1, longitude: 2 })),
 }));
 
+jest.mock("../../src/services/streetviewService", () => ({
+  getStreetViewImage : jest.fn(() => ("mockedStreetViewImageUrl")),
+}))
 describe("Games Controller - POST /games", () => {
   const mockUserId = "user1";
   const mockGameId = "idTestGame";
   const mockTimestamp = expect.any(Number);
   const mockInitialLocation = generateRandomLocation();
-  
+  const mockStreetViewImage = getStreetViewImage({ latitude: 1, longitude: 2 });
+
   beforeEach(() => {
     jest.clearAllMocks();
 
@@ -61,6 +66,7 @@ describe("Games Controller - POST /games", () => {
         gameId: mockGameId,
         initialTime: mockTimestamp,
         initialLocation: mockInitialLocation,
+        streetviewImage: mockStreetViewImage,
       })
     );
     
@@ -69,6 +75,7 @@ describe("Games Controller - POST /games", () => {
         userId: mockUserId,
         initialTime: mockTimestamp,
         initialLocation: mockInitialLocation,
+        streetviewImage: mockStreetViewImage,
       })
     );
 
