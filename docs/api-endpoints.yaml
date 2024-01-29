@@ -130,6 +130,32 @@ paths:
       responses:
         '201':
           description: Created
+          content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                gameId:
+                  type: integer
+                userId:
+                  type: string
+                initialTime:
+                  type: integer
+                initialLocation:
+                  type: object
+                  properties:
+                    latitude:
+                      type: number
+                    longitude:
+                      type: number
+                streetViewImage:
+                  type: string
+              required:
+                - gameId
+                - userId
+                - initialTime
+                - initialLocation
+                - streetViewImage
 
   /games/{gameId}:
     get:
