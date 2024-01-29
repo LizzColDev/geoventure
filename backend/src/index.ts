@@ -1,9 +1,11 @@
 import express, { Express } from "express";
 import dotenv from 'dotenv';
+dotenv.config();
+
 import usersRouter from "./routes/users";
 import gamesRouter from "./routes/games";
 
-dotenv.config();
+
 const app: Express = express();
 const port = process.env.PORT || 3000;
 

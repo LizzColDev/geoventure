@@ -74,12 +74,17 @@ In this step, `"$(cat firebase-credentials.json)"` takes the content from the te
 
 ### 4. Create a `.env` File:
 
-Create a file named `.env` in the root of your project and add the path to the `key.json` file. This prevents direct exposure of credentials in the code. Make sure to add `.env` to the `.gitignore` file to avoid committing it to the repository.
+Create a file named `.env` in the root of your project. This file will store sensitive information and prevent direct exposure of credentials in the code. Make sure to add `.env` to the `.gitignore` file to avoid committing it to the repository.
+
 
 Content of `.env`:
 ```bash
 FIREBASE_CREDENTIALS_PATH=./key.json
+GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
+
+Replace `your_google_maps_api_key_here` with your actual Google Maps API key. Ensure that this key has the necessary permissions for using the StreetView API.
+
 With these steps, you will have created a secret on GitHub named `FIREBASE_CREDENTIALS` with the content of your `key.json` file. The idea is to create a temporary file to avoid directly exposing your credentials on the command line and use an `.env` file to manage the path to the `key.json` file.
 
 ## Running GitHub Actions Locally

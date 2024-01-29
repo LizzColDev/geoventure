@@ -3,6 +3,7 @@ import createError from "http-errors";
 import admin from "../../config/firebase";
 import { GameData } from "../types";
 import { generateRandomLocation } from "../utils/location/generatedRandomLocation";
+import { getStreetViewImage } from "../services/streetviewService";
 
 const db = admin.firestore();
 
@@ -33,11 +34,17 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
     const flatLocation = JSON.parse(JSON.stringify(randomLocation));
 
     const currentTime = new Date().getTime()
-
-    const gameData = {
+    
+    const streetviewImage = await getStreetViewImage({
+      latitude: flatLocation.latitude,
+      longitude: flatLocation.longitude,
+    });
+    
+      const gameData = {
       userId: userId,
       initialTime: currentTime,
       initialLocation: flatLocation,
+      streetviewImage: streetviewImage,
     };
 
     const gameRef = await db.collection("games").add(gameData);
