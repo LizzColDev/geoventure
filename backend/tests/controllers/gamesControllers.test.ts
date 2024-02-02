@@ -1,4 +1,5 @@
 import { Request, Response, NextFunction } from "express";
+import * as geolib from 'geolib';
 import {
   createFirebaseMock,
   addGameMock,
@@ -6,7 +7,6 @@ import {
   deleteMock,
   addMock,
   getMock,
-  updateByIdMock,
 } from "./firebaseMock";
 import { createGame, getGameById, getGames, updateGameById, deleteGameById } from "../../src/controllers/gamesController";
 import createError from "http-errors";
@@ -29,6 +29,11 @@ jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
 jest.mock("../../src/services/streetviewService", () => ({
   getStreetViewImage : jest.fn(() => ("mockedStreetViewImageUrl")),
 }))
+
+jest.mock('geolib', () => ({
+  getDistance: jest.fn(),
+}));
+
 describe("Games Controller - POST /games", () => {
   const mockUserId = "user1";
   const mockGameId = "idTestGame";
@@ -248,14 +253,20 @@ describe("Games Controllers - GET /game/:gameId", () => {
 });
 
 describe("Games Controllers - PATCH /game/:gameId", () => {
+  const mockGameId = "game1";
+  const mockInitialLocation = { latitude: 30, longitude: 40 };
+  const mockEstimatedLocation = { latitude: 1, longitude: 2 };
+  const mockDistance = 50;
+  const mockUserId = "user1"
+
   beforeEach(() => {
     jest.clearAllMocks();
 
     req = {
       params: {
-        gameId: "game1",
+        gameId: mockGameId,
       },
-      body: { latitude: 40.7128, longitude: -74.0060 },
+      body: mockEstimatedLocation,
     } as unknown as Request;
     res = {
       status: jest.fn().mockReturnThis(),
@@ -270,31 +281,43 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
   });
 
   it("should respond with the updated game data", async () => {
-    await updateGameById(req, res, next);
-    const { latitude, longitude } = req.body;
-    expect(updateByIdMock).toHaveBeenCalledWith(
-      "game1",
-      {
-        "endTime": expect.any(Number), 
-        "estimatedLocation": {"latitude": 40.7128, "longitude": -74.006}, 
-        "initialTime": expect.any(Number), 
-        "userId": "user1"}
-    );
-    
-    // Assert the response status, JSON, and next not being called
-    expect(res.status).toHaveBeenCalledWith(201);
-    expect(res.json).toHaveBeenCalledWith({
-      id: "game1", 
-      initialTime: expect.any(Number),
-      endTime: expect.any(Number),
-      userId: "user1",
-      estimatedLocation: { latitude, longitude } 
+        // Mock Firestore 'get' to simulate the existing game document
+    getByIdMock.mockResolvedValueOnce({
+      exists: true,
+      id: mockGameId,
+      data: () => ({
+        initialTime: expect.any(Number),
+        userId: mockUserId,
+        initialLocation: mockInitialLocation,
+      }),
     });
+    (geolib.getDistance as jest.Mock).mockReturnValue(50);
+
+    await updateGameById(req, res, next);
+
+    expect(res.status).toHaveBeenCalledWith(201);
+
+    const endTime = (res.json as jest.Mock).mock.calls[0][0]?.endTime;
+    expect(endTime).toBeGreaterThan(Date.now() - 1000);
+    expect(endTime).toBeLessThanOrEqual(Date.now());
+
+    expect(res.json).toHaveBeenCalledWith({
+      id: mockGameId,
+      initialTime: expect.any(Number),
+      initialLocation: mockInitialLocation,
+      endTime: endTime,
+      userId: mockUserId,
+      estimatedLocation: mockEstimatedLocation,
+      distance: mockDistance,
+      isGuessCorrect: true,
+    });
+
     expect(next).not.toHaveBeenCalled();
   });
 
   it('should handle invalid latitude or longitude', async () => {
     // Test data with invalid coordinates
+    
     const req: any = { params: { gameId: 'game1' }, body: {} };
 
     const res: any = {
