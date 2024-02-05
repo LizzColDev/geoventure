@@ -11,7 +11,7 @@ export const createFirebaseMock = () => ({
       doc: (docId: string) => ({
         get: getByIdMock.bind(null, docId, collectionName),
         delete: deleteMock,
-        set: updateByIdMock.bind(null, docId),
+        set: updateByIdMock,
       }),
     }),
   }),
@@ -27,6 +27,7 @@ export const getMock = jest.fn(async (collectionName) => {
     forEach: (callback: (value: any, index: number, array: any[]) => void) => {
       let mockData: any[] = []
       if(collectionName === "users"){
+
         const users = [
           { id: "user1", userName: "Test User 1" },
           { id: "user2", userName: "Test User 2" },
@@ -63,6 +64,7 @@ export const getMock = jest.fn(async (collectionName) => {
 export const getByIdMock =  jest.fn(async (userId, collectionName) => {
     // Simulating the behavior of the `get` method to retrieve user data
     if (collectionName === "users" && userId === "user1") {
+
       return {
         exists: true,
         id: userId,
@@ -74,7 +76,7 @@ export const getByIdMock =  jest.fn(async (userId, collectionName) => {
         id: userId,
         data: () => ({
           initialTime: 1699305775356,
-          userId: "user1"
+          userId: "user1",
         })
       }
     }else {
@@ -85,23 +87,11 @@ export const getByIdMock =  jest.fn(async (userId, collectionName) => {
 export const deleteMock = jest.fn(() => Promise.resolve());
 
 export const addGameMock = jest.fn(() => {
+
   return Promise.resolve({ id: "idTestGame", userId: "user1", initialTime: 12345 });
 });
 
-export const updateByIdMock = jest.fn( async (docId, latitude, longitude) => {
-
-  if(docId){
-    return { 
-      exists: true,
-      id: docId, 
-      data: () => ( {
-        userId: "user1", 
-        initialTime: expect.any(Number), 
-        endTime: expect.any(Number),
-        estimatedLocation: { latitude: latitude, longitude: longitude }
-      })
-    };
-  } else {
-    throw new Error(`Game ${docId} not found`);
-  }
+export const updateByIdMock = jest.fn(() => {
+  return Promise.resolve();
 });
+
