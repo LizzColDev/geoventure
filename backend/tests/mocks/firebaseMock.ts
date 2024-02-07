@@ -1,3 +1,39 @@
+import { GameData, UserData } from "../../src/types";
+
+// Functions to generate user and game data
+const generateUserData = (): UserData[] => [
+  { exists: true, id: "user1", name: "Test User 1" },
+  { exists: true, id: "user2", name: "Test User 2" }
+];
+
+const generateGameData = (): GameData[] => [
+  {
+    exists: true,
+    id: "gameId1",
+    initialTime: 123,
+    endTime: 345,
+    userId: "test user id 1",
+    initialLocation: { latitude: 1, longitude: 2 },
+    streetViewImage: "mockedStreetViewImageUrl"
+  },
+  {
+    exists: true,
+    id: "gameId2",
+    initialTime: 1234,
+    endTime: 456,
+    userId: "test user id 2",
+    initialLocation: { latitude: 1, longitude: 2 },
+    streetViewImage: "mockedStreetViewImageUrl"
+  }
+];
+
+// Object to map collection name to corresponding data generation function
+const collectionDataMap: { [key: string]: () => UserData[] | GameData[] } = {
+  users: generateUserData,
+  games: generateGameData
+};
+
+
 export const createFirebaseMock = () => ({
   ...jest.requireActual("firebase-admin"),
   credential: {
@@ -6,92 +42,72 @@ export const createFirebaseMock = () => ({
   initializeApp: jest.fn(),
   firestore: () => ({
     collection: (collectionName: string) => ({
-      add: collectionName === "users" ? addMock : addGameMock,
+      add: addMock.bind(null, collectionName),
       get: getMock.bind(null, collectionName),
       doc: (docId: string) => ({
         get: getByIdMock.bind(null, docId, collectionName),
-        delete: deleteMock,
-        set: updateByIdMock,
+        delete: jest.fn(),
+        set: jest.fn(),
       }),
     }),
   }),
 });
 
 // Mocking the Firestore 'add' function with a resolved promise
-export const addMock = jest.fn((data: object) => {
-  return Promise.resolve({ id: "1", username: "Samantha" });
+export const addMock = jest.fn( async (collectionName: string ) => {
+  if (collectionName === "users") {
+    return Promise.resolve({ id: "1", username: "Samantha" });    
+  } else if (collectionName === "games"){
+    return Promise.resolve({ 
+      id: "idTestGame", 
+      userId: "user1", 
+      initialTime: 12345, 
+      initialLocation: { latitude: 1, longitude: 2 },
+      streetViewImage: "mockedStreetViewImageUrl" 
+    });
+  } 
 });
 
-export const getMock = jest.fn(async (collectionName) => {
-  return Promise.resolve({
-    forEach: (callback: (value: any, index: number, array: any[]) => void) => {
-      let mockData: any[] = []
-      if(collectionName === "users"){
 
-        const users = [
-          { id: "user1", userName: "Test User 1" },
-          { id: "user2", userName: "Test User 2" },
-        ];
-        mockData = users;
+// Function to get collection data
+export const getMock = jest.fn(async (collectionName: string) => {
+  const dataGenerator = collectionDataMap[collectionName];
+  if (dataGenerator) {
+    const mockData = dataGenerator();
+    return Promise.resolve({
+      forEach: (callback: (doc: unknown, index: number, array: unknown[]) => void) => {
+        mockData.forEach((dataItem, index) => {
+          callback({ data: () => dataItem, id: `test${index + 1}` }, index, mockData);
+        });
       }
-      else if(collectionName === "games"){
-        const games = [
-          {
-            id: "gameId1",
-            initialTime: 123,
-            userId: "test user id 1"
-          },
-          {		
-            id: "gameId2",
-            initialTime: 1234,
-            userId: "test user id 2"
-        },
-        ];
-        mockData = games;
-      }
-  
-      // Loop through the mockData array and execute the callback for each user or game
-      mockData.forEach((dataItem, index) => {
-        callback({ data: () => dataItem, id: `test${index + 1}` }, index, mockData);
-      });
-    },
-  })
-  
-
+    });
+  } else {
+    return Promise.resolve(undefined);
+  }
 });
-
+  
 // Creating a mock for Firebase Firestore operations in the context of retrieving user data
 export const getByIdMock =  jest.fn(async (userId, collectionName) => {
-    // Simulating the behavior of the `get` method to retrieve user data
-    if (collectionName === "users" && userId === "user1") {
+  // Simulating the behavior of the `get` method to retrieve user data
+  if (collectionName === "users" && userId === "user1") {
 
-      return {
-        exists: true,
-        id: userId,
-        data: () => ({ name: "Juanita Test" }),
-      };
-    } else if (collectionName === "games" && userId === "game1") {
-      return {
-        exists: true,
-        id: userId,
-        data: () => ({
-          initialTime: 1699305775356,
-          userId: "user1",
-        })
-      }
-    }else {
-      throw new Error(`${collectionName === "users" ? "User" : "Game"} not found`);
+    return {
+      exists: true,
+      id: userId,
+      data: () => ({ name: "Juanita Test" }),
+    };
+  } else if (collectionName === "games" && userId === "idTestGame") {
+    return {
+      exists: true,
+      id: userId,
+      data: () => ({
+        initialTime: 1699305775356,
+        userId: "user1",
+        initialLocation: { latitude: 1, longitude: 2 },
+        streetViewImage: "mockedStreetViewImageUrl",
+      })
     }
-  });
-
-export const deleteMock = jest.fn(() => Promise.resolve());
-
-export const addGameMock = jest.fn(() => {
-
-  return Promise.resolve({ id: "idTestGame", userId: "user1", initialTime: 12345 });
+  }else {
+    throw new Error(`${collectionName === "users" ? "User" : "Game"} not found`);
+  }
 });
-
-export const updateByIdMock = jest.fn(() => {
-  return Promise.resolve();
-});
-
