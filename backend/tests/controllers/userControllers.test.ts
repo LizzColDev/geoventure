@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addMock, createFirebaseMock, getMock, getByIdMock } from "../firebaseMock";
+import { addMock, createFirebaseMock, getMock, getByIdMock } from "../mocks/firebaseMock";
 import {
   createUser,
   getUserById,
@@ -98,8 +98,8 @@ describe("GET /users", () => {
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([
-      { id: "user1", userName: "Test User 1" },
-      { id: "user2", userName: "Test User 2" },
+      { exists: true, id: "user1", name: "Test User 1" },
+      { exists: true, id: "user2", name: "Test User 2" },
     ]);
   });
 
