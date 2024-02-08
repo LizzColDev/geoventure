@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
+import * as geolib from 'geolib';
 import admin from "../../config/firebase";
 import { GameData } from "../types";
 import { generateRandomLocation } from "../utils/location/generatedRandomLocation";
@@ -36,9 +37,10 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
     const currentTime = new Date().getTime()
     
     const streetviewImage = await getStreetViewImage({
-      latitude: flatLocation.latitude,
-      longitude: flatLocation.longitude,
+      latitude:  4.259479303482666,
+      longitude: -73.56642502793588,
     });
+
     
       const gameData = {
       userId: userId,
@@ -110,30 +112,37 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
       const {gameId} = req.params;
       const { latitude, longitude } = req.body;
 
-      if (
-        !latitude ||
-        !longitude ||
-        typeof latitude !== 'number' ||
-        typeof longitude !== 'number'
-      ) {
-        return next(
-          createError(422, 'Invalid latitude or longitude. Both must be numbers.')
-        );
+      if (latitude === undefined || longitude === undefined){
+        throw createError(422, 'Latitude and longitude are required.');
       }
-
 
       const gameRef = db.collection('games').doc(gameId);
       const gameDoc = await gameRef.get();
       
       if (!gameDoc.exists) {
-        return next(createError(404, `Game ${gameId} not found`));
+        throw createError(404, `Game ${gameId} not found`);
       }
       
       const currentTime = Date.now();     
+      const guessedLocation = { latitude, longitude };
+      const initialLocation = gameDoc.data()?.initialLocation;
+      
+      if (!initialLocation) {
+        throw createError(500, 'Initial location not found.');
+      }
+      const distance = geolib.getDistance(guessedLocation, initialLocation);
+
+      const distanceThreshold = 100;
+
+      const isGuessCorrect = distance <= distanceThreshold;
+
       const gameData = {
         endTime: currentTime, 
-        estimatedLocation: { latitude, longitude },
-        ...gameDoc.data()};
+        estimatedLocation: guessedLocation,
+        distance,
+        isGuessCorrect,
+        ...gameDoc.data()
+      };
 
       await gameRef.set(gameData)
 
