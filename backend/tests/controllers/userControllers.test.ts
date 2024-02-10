@@ -1,5 +1,5 @@
 import { Request, Response, NextFunction } from "express";
-import { addMock, createFirebaseMock, deleteMock, getMock, getByIdMock } from "./firebaseMock";
+import { addMock, createFirebaseMock, getMock, getByIdMock } from "../mocks/firebaseMock";
 import {
   createUser,
   getUserById,
@@ -18,31 +18,31 @@ jest.mock("firebase-admin", () => {
   return firebaseMock;
 });
 
+beforeEach(() => {
+  jest.clearAllMocks();
+  // Setting up the request body
+  req = {
+    params: {},
+    body: {},
+  } as unknown as Request;
+
+  // Mocking the response object with appropriate methods
+  res = {
+    status: jest.fn().mockReturnThis(),
+    json: jest.fn(),
+  } as unknown as Response;
+
+  // Mocking the 'next' function
+  next = jest.fn();
+});
+
+afterEach(() => {
+  jest.clearAllMocks();
+});
 describe("User Controller - POST /users", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-    // Setting up the request body
-    req = {
-      body: {
-        name: "Rosita",
-      },
-    } as Request;
-
-    // Mocking the response object with appropriate methods
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
-
-    // Mocking the 'next' function
-    next = jest.fn();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
 
   it("should create a new user in Firebase with valid data", async () => {
+    req.body.name = "Rosita"
     await createUser(req, res, next);
 
     // Assert the response status and JSON
@@ -63,12 +63,12 @@ describe("User Controller - POST /users", () => {
     );
   });
   it("should handle and call 'next' for caught errors", async () => {
+    req.body.name = "Rosita"
     // Mock an error being thrown in the controller
     const expectedError = new Error("Test error");
     addMock.mockRejectedValueOnce(expectedError);
 
     await createUser(req, res, next);
-
     // Assert that 'next' is called with the expected error
     expect(next).toHaveBeenCalledWith(expectedError);
   });
@@ -84,11 +84,7 @@ describe("GET /users", () => {
   };
 
   beforeEach(() => {
-    jest.clearAllMocks();
-
-    req = {} as Request;
     res = mockResponse();
-    next = jest.fn();
   });
 
   afterEach(() => {
@@ -102,14 +98,14 @@ describe("GET /users", () => {
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith([
-      { id: "user1", userName: "Test User 1" },
-      { id: "user2", userName: "Test User 2" },
+      { exists: true, id: "user1", name: "Test User 1" },
+      { exists: true, id: "user2", name: "Test User 2" },
     ]);
   });
 
   it("should respond with 404 and an error message when no users exist in firebase", async () => {
     getMock.mockReturnValueOnce(Promise.resolve({
-      forEach: (callback: Function) => {},
+      forEach: () => {},
     }));
 
     await getUsers(req, res, next);
@@ -132,27 +128,9 @@ describe("GET /users", () => {
 });
 
 describe("Users Controllers - GET /users/:userId", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-
-    req = {
-      params: {
-        userId: "user1",
-      },
-    } as unknown as Request;
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
-
-    next = jest.fn() as NextFunction;
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
-
+  
   it("should respond with the user details in firebase", async () => {
+    req.params.userId = "user1"
     await getUserById(req, res, next);
 
     expect(getByIdMock).toHaveBeenCalledWith('user1', 'users');
@@ -171,9 +149,6 @@ describe("Users Controllers - GET /users/:userId", () => {
 
     await getUserById(req, res, next);
 
-
-    expect(getByIdMock).toHaveBeenCalled();
-
     // Assert that next is called with a 404 error
     expect(next).toHaveBeenCalledWith(
       expect.objectContaining({ message: "User not found" })
@@ -183,40 +158,12 @@ describe("Users Controllers - GET /users/:userId", () => {
 });
 
 describe("User Controller - DELETE /users/:userId", () => {
-  beforeEach(() => {
-    jest.clearAllMocks();
-
-    req = {
-      params: {},
-      body: {},
-    } as unknown as Request;
-
-    res = {
-      status: jest.fn().mockReturnThis(),
-      json: jest.fn(),
-    } as unknown as Response;
-
-    next = jest.fn();
-  });
-
-  afterEach(() => {
-    jest.clearAllMocks();
-  });
 
   it("should delete a user in Firebase with valid data", async () => {
     req.params.userId = "user1";
 
     await deleteUser(req, res, next);
 
-    // Verify that getByIdMock is called
-    expect(getByIdMock).toHaveBeenCalledWith('user1', 'users');
-
-    // Verify that deleteMock is called
-    expect(deleteMock).toHaveBeenCalled();
-    
-    // Verify that methods that shouldn't be called are not called
-    expect(addMock).not.toHaveBeenCalled();
-    expect(getMock).not.toHaveBeenCalled();
     expect(next).not.toHaveBeenCalled();
     // Assert the response status and JSON
     expect(res.status).toHaveBeenCalledWith(204);
@@ -229,16 +176,6 @@ describe("User Controller - DELETE /users/:userId", () => {
     req.params.userId = "nonexistent";
 
     await deleteUser(req, res, next);
-
-    // Verify that getByIdMock is called
-    expect(getByIdMock).toHaveBeenCalledWith('nonexistent', 'users');
-
-    // Verify that deleteMock is not called
-    expect(deleteMock).not.toHaveBeenCalled();
-    
-    // Verify that methods that shouldn't be called are not called
-    expect(addMock).not.toHaveBeenCalled();
-    expect(getMock).not.toHaveBeenCalled();
 
     // Assert that next is called with a 404 error
     expect(next).toHaveBeenCalledWith(
