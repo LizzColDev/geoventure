@@ -96,7 +96,7 @@ describe("Games Controller - POST /games", () => {
     await createGame(req, res, next);
 
     expect(next).toHaveBeenCalledWith(
-      createError(422, "Invalid userId. userId must be a non-empty string.")
+      createError(422, '"userId" is not allowed to be empty')
     );
     expect(res.status).not.toHaveBeenCalled();
     expect(res.send).not.toHaveBeenCalled();
