@@ -14,6 +14,12 @@ const userIdSchema = Joi.object({
   userId: Joi.string().trim().min(1).required()
 });
 
+// Define Joi schema for location
+const locationSchema = Joi.object({
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required()
+});
+
 export const createGame = async (req: Request, res: Response, next: NextFunction) => {
   try {
     const { error: userIdError, value: userIdValue } = userIdSchema.validate(req.body);
@@ -112,8 +118,10 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
       const {gameId} = req.params;
       const { latitude, longitude } = req.body;
 
-      if (latitude === undefined || longitude === undefined){
-        throw createError(422, 'Latitude and longitude are required.');
+      const locationValidation = locationSchema.validate({ latitude, longitude });
+
+      if (locationValidation.error) {
+        throw createError(422, locationValidation.error.details[0].message);
       }
 
       const gameRef = db.collection('games').doc(gameId);
