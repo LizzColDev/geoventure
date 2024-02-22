@@ -230,6 +230,7 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
     await updateGameById(req, res, next);
   
     expect(next).toHaveBeenCalledWith(expect.any(Error));
+    expect(next).toHaveBeenCalledWith(createError(422, '"latitude" is required'));
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
   });
