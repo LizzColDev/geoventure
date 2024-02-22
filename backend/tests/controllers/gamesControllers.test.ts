@@ -96,7 +96,7 @@ describe("Games Controller - POST /games", () => {
     await createGame(req, res, next);
 
     expect(next).toHaveBeenCalledWith(
-      createError(422, "Invalid userId. userId must be a non-empty string.")
+      createError(422, '"userId" is not allowed to be empty')
     );
     expect(res.status).not.toHaveBeenCalled();
     expect(res.send).not.toHaveBeenCalled();
@@ -230,6 +230,7 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
     await updateGameById(req, res, next);
   
     expect(next).toHaveBeenCalledWith(expect.any(Error));
+    expect(next).toHaveBeenCalledWith(createError(422, '"latitude" is required'));
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
   });

@@ -1,5 +1,6 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
+import Joi from "joi";
 import * as geolib from 'geolib';
 import admin from "../../config/firebase";
 import { GameData } from "../types";
@@ -8,27 +9,32 @@ import { getStreetViewImage } from "../services/streetviewService";
 
 const db = admin.firestore();
 
+// Define Joi schema for user ID
+const userIdSchema = Joi.object({
+  userId: Joi.string().trim().min(1).required()
+});
+
+// Define Joi schema for location
+const locationSchema = Joi.object({
+  latitude: Joi.number().min(-90).max(90).required(),
+  longitude: Joi.number().min(-180).max(180).required()
+});
+
 export const createGame = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { userId } = req.body;
-
-    if (
-      !userId ||
-      typeof userId !== "string" ||
-      userId.trim().length === 0
-    ) {
-      return next(
-        createError(422, "Invalid userId. userId must be a non-empty string.")
-        )
+    const { error: userIdError, value: userIdValue } = userIdSchema.validate(req.body);
+    const userId = userIdValue.userId.trim();
+    
+    if (userIdError){
+      // If validation fails, return an error response
+      return next(createError(422, userIdError.details[0].message));
     }
 
     const userRef = admin.firestore().collection('users').doc(userId);
     const userDoc = await userRef.get();
 
     if (!userDoc.exists) {
-      return next(
-        createError(404, "User not found")
-        );
+      return next (createError(404, "User not found"));
     }
 
     const randomLocation = await generateRandomLocation();
@@ -112,8 +118,10 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
       const {gameId} = req.params;
       const { latitude, longitude } = req.body;
 
-      if (latitude === undefined || longitude === undefined){
-        throw createError(422, 'Latitude and longitude are required.');
+      const locationValidation = locationSchema.validate({ latitude, longitude });
+
+      if (locationValidation.error) {
+        throw createError(422, locationValidation.error.details[0].message);
       }
 
       const gameRef = db.collection('games').doc(gameId);

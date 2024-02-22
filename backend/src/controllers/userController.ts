@@ -1,26 +1,29 @@
 import { NextFunction, Request, Response } from "express";
 import createError from "http-errors";
+import Joi from "joi";
 import admin from "../../config/firebase";
 import { UserData } from "../types";
 
 const db = admin.firestore();
 
+// Define Joi schema for user creation
+const userSchema = Joi.object({
+  name: Joi.string().trim().min(1).required()
+});
+
 export const createUser = async (req: Request, res: Response, next: NextFunction) => {
   try {
-    const { body } = req;
+    
+    const { error, value } = userSchema.validate(req.body);
 
-    if (
-      !body.name ||
-      typeof body.name !== "string" ||
-      body.name.trim().length === 0
-    ) {
-      return next(
-        createError(422, "Invalid name. Name must be a non-empty string.")
-      );
+    if (error){
+      // If validation fails, return an error response
+      return next(createError(422, error.details[0].message));
     }
 
+    // If validation passes, proceed to create the user
     const newUser = {
-      name: body.name.trim(),
+      name: value.name.trim(),
     };
 
     const documentREference = await db.collection("users").add(newUser);

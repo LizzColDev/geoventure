@@ -59,7 +59,7 @@ describe("User Controller - POST /users", () => {
 
     // Assert that 'next' is called with the appropriate error
     expect(next).toHaveBeenCalledWith(
-      createError(422, "Invalid name. Name must be a non-empty string.")
+      createError(422, '"name" is not allowed to be empty')
     );
   });
   it("should handle and call 'next' for caught errors", async () => {
