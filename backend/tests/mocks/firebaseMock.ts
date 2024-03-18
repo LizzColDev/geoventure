@@ -1,4 +1,13 @@
-import { GameData, UserData } from "../../src/types";
+import { GameData, UserData, StreetViewInfo } from "../../src/types";
+
+const streetViewData: StreetViewInfo = {
+  urlImage: "data:image/jpeg;base64,/test",
+  initialLocation: {
+    latitude: 1,
+    longitude: 2
+  },
+  namePlace: "Place test"
+};
 
 // Functions to generate user and game data
 const generateUserData = (): UserData[] => [
@@ -13,8 +22,8 @@ const generateGameData = (): GameData[] => [
     initialTime: 123,
     endTime: 345,
     userId: "test user id 1",
-    initialLocation: { latitude: 1, longitude: 2 },
-    streetViewImage: "mockedStreetViewImageUrl"
+    guessedLocation: { latitude: 1, longitude: 2},
+    streetViewInfo: streetViewData
   },
   {
     exists: true,
@@ -22,8 +31,8 @@ const generateGameData = (): GameData[] => [
     initialTime: 1234,
     endTime: 456,
     userId: "test user id 2",
-    initialLocation: { latitude: 1, longitude: 2 },
-    streetViewImage: "mockedStreetViewImageUrl"
+    guessedLocation: { latitude: 1, longitude: 2},
+    streetViewInfo: streetViewData
   }
 ];
 
@@ -62,8 +71,7 @@ export const addMock = jest.fn( async (collectionName: string ) => {
       id: "idTestGame", 
       userId: "user1", 
       initialTime: 12345, 
-      initialLocation: { latitude: 1, longitude: 2 },
-      streetViewImage: "mockedStreetViewImageUrl" 
+      streetViewInfo: streetViewData
     });
   } 
 });
@@ -96,16 +104,19 @@ export const getByIdMock =  jest.fn(async (userId, collectionName) => {
       id: userId,
       data: () => ({ name: "Juanita Test" }),
     };
-  } else if (collectionName === "games" && userId === "idTestGame") {
-    return {
-      exists: true,
-      id: userId,
-      data: () => ({
-        initialTime: 1699305775356,
-        userId: "user1",
-        initialLocation: { latitude: 1, longitude: 2 },
-        streetViewImage: "mockedStreetViewImageUrl",
-      })
+  } else if (collectionName === "games") {
+    if (userId === "unExistedGame") {
+      return {exists: false}; 
+    } else if (userId === "idTestGame") {
+      return {
+        exists: true,
+        id: userId,
+        data: () => ({
+          initialTime: 1699305775356,
+          userId: "user1",
+          streetViewInfo: streetViewData
+        })
+      };
     }
   }else {
     throw new Error(`${collectionName === "users" ? "User" : "Game"} not found`);
