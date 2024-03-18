@@ -1,41 +1,35 @@
 import axios, { AxiosResponse } from "axios";
 import { StreetViewOptions } from "../types";
 
-const apiKey: string = process.env.GOOGLE_MAPS_API_KEY as string;
+const GOOGLE_MAPS_API_KEY: string = process.env.GOOGLE_MAPS_API_KEY as string;
 
-const axiosInstance = axios.create({
-  baseURL: "https://maps.googleapis.com/maps/api",
-  timeout: 5000,
-  params: {
-    key: apiKey,
-    v: '3.49'
-  },
-});
-
-
+// Function to get a random Street View image of a famous place
 const  getStreetViewImage =async (options: StreetViewOptions): Promise<string> => {
-    try {
-      const { latitude, longitude } = options;
-      const size = '600x300'
-      const heading = '0';
-      const streetViewUrl = `/streetview?size=${size}&location=${latitude},${longitude}&heading=${heading}`;
-      const response: AxiosResponse<ArrayBuffer> = await axiosInstance.get(streetViewUrl, { responseType: 'arraybuffer' });
-      const streetViewImage = `data:image/jpeg;base64,${Buffer.from(response.data).toString('base64')}`;
+  try {
+    const { latitude, longitude } = options;
+    const size = '600x300'
+    const heading = '0';
+    const streetViewUrl = 
+      `https://maps.googleapis.com/maps/api/streetview?size=${size}` +
+      `&location=${latitude},${longitude}&heading=${heading}&key=${GOOGLE_MAPS_API_KEY}`;
       
-      if (response.status !== 200) {
-        throw new Error(`Error fetching StreetView image. Status code: ${response.status}`);
-      }
+    const response: AxiosResponse<ArrayBuffer> = await axios.get(streetViewUrl, { responseType: 'arraybuffer' });
+    const streetViewImage = `data:image/jpeg;base64,${Buffer.from(response.data).toString('base64')}`;
       
-      return streetViewImage;
-
-    } catch (error:unknown) {
-      if (axios.isAxiosError(error)) {
-        console.error('Error fetching StreetView image:', error.message);
-      } else {
-        console.error('Unknown error:', error);
-      }
-      throw new Error('Error fetching StreetView image.');
+    if (response.status !== 200) {
+      throw new Error(`Error fetching StreetView image. Status code: ${response.status}`);
     }
+    
+    return streetViewImage;
+
+  } catch (error:unknown) {
+    if (axios.isAxiosError(error)) {
+      console.error('Error fetching StreetView image:', error.message);
+    } else {
+      console.error('Unknown error:', error);
+    }
+    throw new Error('Error fetching StreetView image.');
+  }
 }
 
 export { getStreetViewImage };
