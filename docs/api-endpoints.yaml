@@ -19,7 +19,8 @@ paths:
       responses:
         '200':
           description: OK
-
+  
+  /user:
     post:
       tags: 
         - users
@@ -118,7 +119,7 @@ paths:
                   $ref: '#/components/schemas/Game'
         '404':
           description: No games found
-
+  /game:
     post:
       tags: 
         - games
