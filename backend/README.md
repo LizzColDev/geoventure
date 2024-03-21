@@ -152,41 +152,41 @@ The pre-commit hook is set up to run linting before each commit.
 
 ## Users
 
-### [POST /users]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/dev/docs/api-endpoints.yaml#L23))
+### [POST /user]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L24))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L23) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L24) to view the API endpoint configuration.
 
 ### [GET /users]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L15))
 
 [Click here](https://github.com/LizzColDev/geoventure/blob/c6b8bfd915d8ef787a19d7a88073515e802d7ee4/docs/api-endpoints.yaml#L15) to view the API endpoint configuration.
 
-### [GET /users/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/33bf977e4f51822099f4b17965e834f8ee2e981d/docs/api-endpoints.yaml#L42))
+### [GET /user/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L44))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/33bf977e4f51822099f4b17965e834f8ee2e981d/docs/api-endpoints.yaml#L42) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L44) to view the API endpoint configuration.
 
-### [DELETE /users/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88))
+### [DELETE /user/{userId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L89))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/f23c3fcf8842941c37993ccac5286156c20bce22/docs/api-endpoints.yaml#L88) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L89) to view the API endpoint configuration.
 
 
 ## Games
 
-### [POST /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/8c97efb83981a0a9fc02dd43579d97b944b9938d/docs/api-endpoints.yaml#L117))
+### [POST /game]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L123))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/8c97efb83981a0a9fc02dd43579d97b944b9938d/docs/api-endpoints.yaml#L117) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L123) to view the API endpoint configuration.
 
-### [GET /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/63ff92684a6bb122344d7199e806094a74ba1e3d/docs/api-endpoints.yaml#L106))
+### [GET /games]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L107))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/63ff92684a6bb122344d7199e806094a74ba1e3d/docs/api-endpoints.yaml#L106) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L107) to view the API endpoint configuration.
 
-### [GET /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/cbd792b58d93c9db29e58ca73dae851277f61460/docs/api-endpoints.yaml#L134))
+### [GET /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L147))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/cbd792b58d93c9db29e58ca73dae851277f61460/docs/api-endpoints.yaml#L134) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L147) to view the API endpoint configuration.
 
-### [PATCH /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/28b0fb9c17da65b350186808c97fcd92d5fe7032/docs/api-endpoints.yaml#L152))
+### [PATCH /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L168))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/28b0fb9c17da65b350186808c97fcd92d5fe7032/docs/api-endpoints.yaml#L152) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L168) to view the API endpoint configuration.
 
-### [DELETE /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/089a267bdc48bef76bc360741a264f7e34986676/docs/api-endpoints.yaml#L186))
+### [DELETE /game/{gameId}]([api-endpoint.yaml](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L198))
 
-[Click here](https://github.com/LizzColDev/geoventure/blob/089a267bdc48bef76bc360741a264f7e34986676/docs/api-endpoints.yaml#L186) to view the API endpoint configuration.
+[Click here](https://github.com/LizzColDev/geoventure/blob/87108f28d031e242effd6f3c94d172b3dea2db46/docs/api-endpoints.yaml#L198) to view the API endpoint configuration.

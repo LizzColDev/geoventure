@@ -1,7 +1,6 @@
 import { Request, Response, NextFunction } from "express";
 import * as geolib from 'geolib';
 import createError from "http-errors";
-import { generateRandomLocation } from "../../src/utils/location/generatedRandomLocation";
 import { getStreetViewImage } from "../../src/services/streetviewService";
 import { UserData } from '../../src/types';
 import {
@@ -17,7 +16,14 @@ jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
   generateRandomLocation: jest.fn(() => ({ latitude: 1, longitude: 2 })),
 }));
 jest.mock("../../src/services/streetviewService", () => ({
-  getStreetViewImage : jest.fn(() => ("mockedStreetViewImageUrl")),
+  getStreetViewImage : jest.fn(() => ({
+    urlImage: "data:image/jpeg;base64,/test",
+    initialLocation: {
+      latitude: 1,
+      longitude: 2
+    },
+    namePlace: "Place test"
+  })),
 }))
 jest.mock('geolib', () => ({ getDistance: jest.fn() }));
 
@@ -28,8 +34,9 @@ let next: NextFunction;
 
 const mockUserId = "user1";
 const mockGameId = "idTestGame";
-const mockLocation = generateRandomLocation();
-const mockStreetViewImage = getStreetViewImage({ latitude: 1, longitude: 2 });
+const mockUnexistedGame = "unExistedGame"
+const mockLocation = { latitude: 1, longitude: 2};
+const mockStreetViewImage = getStreetViewImage();
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -64,8 +71,7 @@ describe("Games Controller - POST /games", () => {
         userId: mockUserId,
         gameId: mockGameId,
         initialTime: expect.any(Number),
-        initialLocation: mockLocation,
-        streetviewImage: mockStreetViewImage,
+        streetViewInfo: mockStreetViewImage,
       })
     );
     expect(next).not.toHaveBeenCalled();
@@ -129,16 +135,16 @@ describe("GET /games", () =>{
         initialTime: 123,
         endTime: 345,
         userId: "test user id 1",
-        initialLocation: mockLocation,
-        streetViewImage: mockStreetViewImage,
+        guessedLocation: mockLocation,
+        streetViewInfo: mockStreetViewImage,
       },
       {	exists: true,	
         id: "gameId2",
         initialTime: 1234,
         endTime: 456,
         userId: "test user id 2",
-        initialLocation: mockLocation,
-        streetViewImage: mockStreetViewImage,
+        guessedLocation: mockLocation,
+        streetViewInfo: mockStreetViewImage,
     },
     ])
   })
@@ -171,24 +177,26 @@ describe("Games Controllers - GET /game/:gameId", () => {
     req.params.gameId = mockGameId
 
     await getGameById(req, res, next);    
+    expect(getByIdMock).toHaveBeenCalledWith(mockGameId, 'games');
 
     expect(res.status).toHaveBeenCalledWith(200);
     expect(res.json).toHaveBeenCalledWith({
       id: mockGameId,
       initialTime: 1699305775356,
+      streetViewInfo: mockStreetViewImage,
       userId: mockUserId,
-      initialLocation: mockLocation,
-      streetViewImage: mockStreetViewImage,
     });
     expect(next).not.toHaveBeenCalled();
   });
 
   it("should respond with a 404 status code for game not found", async () => {
-    req.params.gameId = "nonexist";
+    req.params.gameId = mockUnexistedGame;
 
     await getGameById(req, res, next);
+    expect(getByIdMock).toHaveBeenCalledWith(mockUnexistedGame, 'games');
+
     expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Game not found" })
+      expect.objectContaining({ message: expect.stringMatching("Game not found") })
     );
   });
 
@@ -198,11 +206,11 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
   it("should respond with the updated game data", async () => {
     req.params.gameId = mockGameId;
     req.body = mockLocation;
-
+    
     (geolib.getDistance as jest.Mock).mockReturnValue(50);
 
     await updateGameById(req, res, next);
-
+    expect(getByIdMock).toHaveBeenCalledWith(mockGameId, 'games');
     expect(res.status).toHaveBeenCalledWith(201);
 
     const endTime = (res.json as jest.Mock).mock.calls[0][0]?.endTime;
@@ -212,13 +220,12 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
     expect(res.json).toHaveBeenCalledWith({
       id: mockGameId,
       initialTime: expect.any(Number),
-      initialLocation: mockLocation,
       endTime: endTime,
       userId: mockUserId,
-      estimatedLocation: mockLocation,
+      guessedLocation: mockLocation,
       distance: 50,
       isGuessCorrect: true,
-      streetViewImage: mockStreetViewImage,
+      streetViewInfo: mockStreetViewImage,
     });
 
     expect(next).not.toHaveBeenCalled();
@@ -226,7 +233,8 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
 
   it('should handle invalid latitude or longitude', async () => {
     req.params.gameId = mockGameId;
-  
+    req.body = {
+    }; 
     await updateGameById(req, res, next);
   
     expect(next).toHaveBeenCalledWith(expect.any(Error));
@@ -236,13 +244,15 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
   });
   
   it('should handle game not found error', async () => {
-    req.params.gameId = "unexistedgame";
+    req.params.gameId = mockUnexistedGame;
     req.body = mockLocation;
     await updateGameById(req, res, next);
+    expect(getByIdMock).toHaveBeenCalledWith(mockUnexistedGame, 'games');
 
     expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Game not found" })
+      expect.objectContaining({ message: expect.stringMatching("Game not found") })
     );
+
     expect(res.status).not.toHaveBeenCalled();
     expect(res.json).not.toHaveBeenCalled();
   });
@@ -262,12 +272,13 @@ describe("Game Controller - DELETE /games/:gameId", () => {
   });
 
   it("should respond with 404 status for non-existent user", async () => {
-    req.params.gameId = "nonexistent";
+    req.params.gameId = mockUnexistedGame;
     
     await deleteGameById(req, res, next);
+    expect(getByIdMock).toHaveBeenCalledWith(mockUnexistedGame, 'games');
     
     expect(next).toHaveBeenCalledWith(
-      expect.objectContaining({ message: "Game not found" })
+      expect.objectContaining({ message: expect.stringMatching("Game not found") })
     );
   });
 });

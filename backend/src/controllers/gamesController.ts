@@ -4,7 +4,6 @@ import Joi from "joi";
 import * as geolib from 'geolib';
 import admin from "../../config/firebase";
 import { GameData } from "../types";
-import { generateRandomLocation } from "../utils/location/generatedRandomLocation";
 import { getStreetViewImage } from "../services/streetviewService";
 
 const db = admin.firestore();
@@ -37,22 +36,14 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
       return next (createError(404, "User not found"));
     }
 
-    const randomLocation = await generateRandomLocation();
-    const flatLocation = JSON.parse(JSON.stringify(randomLocation));
-
     const currentTime = new Date().getTime()
     
-    const streetviewImage = await getStreetViewImage({
-      latitude:  4.259479303482666,
-      longitude: -73.56642502793588,
-    });
-
+    const streetviewImage = await getStreetViewImage();
     
-      const gameData = {
+    const gameData = {
       userId: userId,
       initialTime: currentTime,
-      initialLocation: flatLocation,
-      streetviewImage: streetviewImage,
+      streetViewInfo: streetviewImage,
     };
 
     const gameRef = await db.collection("games").add(gameData);
@@ -114,52 +105,52 @@ export const getGameById =async (req:Request, res: Response, next: NextFunction)
 
 export const updateGameById =async (req:Request, res: Response, next: NextFunction) => {
 
-    try {
-      const {gameId} = req.params;
-      const { latitude, longitude } = req.body;
+  try {
+    const {gameId} = req.params;
+    const { latitude, longitude } = req.body;
+    
+    const locationValidation = locationSchema.validate({ latitude, longitude });
 
-      const locationValidation = locationSchema.validate({ latitude, longitude });
-
-      if (locationValidation.error) {
-        throw createError(422, locationValidation.error.details[0].message);
-      }
-
-      const gameRef = db.collection('games').doc(gameId);
-      const gameDoc = await gameRef.get();
-      
-      if (!gameDoc.exists) {
-        throw createError(404, `Game ${gameId} not found`);
-      }
-      
-      const currentTime = Date.now();     
-      const guessedLocation = { latitude, longitude };
-      const initialLocation = gameDoc.data()?.initialLocation;
-      
-      if (!initialLocation) {
-        throw createError(500, 'Initial location not found.');
-      }
-      const distance = geolib.getDistance(guessedLocation, initialLocation);
-
-      const distanceThreshold = 100;
-
-      const isGuessCorrect = distance <= distanceThreshold;
-
-      const gameData = {
-        endTime: currentTime, 
-        estimatedLocation: guessedLocation,
-        distance,
-        isGuessCorrect,
-        ...gameDoc.data()
-      };
-
-      await gameRef.set(gameData)
-
-      res.status(201).json({id: gameDoc.id, ...gameData });
-
-      console.log(`Game updated successfully - Game ID: ${gameDoc.id}`);
-    } catch (error) {
-      next(error);
+    if (locationValidation.error) {
+      throw createError(422, locationValidation.error.details[0].message);
     }
+
+    const gameRef = db.collection('games').doc(gameId);
+    const gameDoc = await gameRef.get();
+    
+    if (!gameDoc.exists) {
+      throw createError(404, `Game ${gameId} not found`);
+    }
+    
+    const currentTime = Date.now();     
+    const guessedLocation = { latitude, longitude };
+    const initialLocation = gameDoc.data()?.streetViewInfo.initialLocation;
+
+    if (!initialLocation) {
+      throw createError(500, 'Initial location not found.');
+    }
+    const distance = geolib.getDistance(guessedLocation, initialLocation);
+
+    const distanceThreshold = 100;
+
+    const isGuessCorrect = distance <= distanceThreshold;
+
+    const gameData = {
+      endTime: currentTime, 
+      guessedLocation: guessedLocation,
+      distance,
+      isGuessCorrect,
+      ...gameDoc.data()
+    };
+
+    await gameRef.set(gameData)
+
+    res.status(201).json({id: gameDoc.id, ...gameData });
+
+    console.log(`Game updated successfully - Game ID: ${gameDoc.id}`);
+  } catch (error) {
+    next(error);
+  }
 }
 
 export const deleteGameById =async (req: Request, res: Response, next: NextFunction) => {

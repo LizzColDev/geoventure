@@ -3,7 +3,11 @@ export interface Coordinates {
   longitude: number;
 }
 
-export interface StreetViewOptions extends Coordinates {}
+export interface StreetViewInfo {
+  urlImage?: string;
+  initialLocation: Coordinates;
+  namePlace?: string;
+}
 
 export interface GameData {
   exists: boolean;
@@ -11,9 +15,8 @@ export interface GameData {
   endTime: number;
   initialTime: number;
   userId: string;
-  initialLocation?: Coordinates;
   guessedLocation?: Coordinates;
-	streetViewImage?: string;
+	streetViewInfo?: StreetViewInfo;
 }
 
 export interface UserData {

@@ -1,6 +1,6 @@
 openapi: 3.0.0
 info:
-  version: 0.0.1
+  version: 1.0.0
   title: GeoVenture API
   description: An API for managing users and games with GeoVenture.
 
@@ -19,7 +19,8 @@ paths:
       responses:
         '200':
           description: OK
-
+  
+  /user:
     post:
       tags: 
         - users
@@ -39,7 +40,7 @@ paths:
         '201':
           description: Created
 
-  /users/{userId}:
+  /user/{userId}:
     get:
       tags: 
         - users
@@ -110,54 +111,39 @@ paths:
       responses:
         '200':
           description: OK
-
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: '#/components/schemas/Game'
+        '404':
+          description: No games found
+  /game:
     post:
       tags: 
-        - game
-      summary: Create a new game with the backend saving the Unix time of the request as the initial time and generating a random initial location.
+        - games
+      summary: Create a new game
+      description: Creates a new game associated with the provided user ID, with the initial time set to the Unix time of the request and a randomly generated initial location.
       requestBody:
         required: true
         content:
           application/json:
             schema:
-              type: object
-              properties:
-                userId:
-                  type: integer
-                  description: ID of the user associated with the game
-              required:
-                - userId
+              $ref: '#/components/schemas/NewGameRequest'
       responses:
         '201':
-          description: Created
+          description: Game created successfully
           content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                gameId:
-                  type: integer
-                userId:
-                  type: string
-                initialTime:
-                  type: integer
-                initialLocation:
-                  type: object
-                  properties:
-                    latitude:
-                      type: number
-                    longitude:
-                      type: number
-                streetViewImage:
-                  type: string
-              required:
-                - gameId
-                - userId
-                - initialTime
-                - initialLocation
-                - streetViewImage
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
+        '404':
+          description: User not found
+        '500':
+          description: Internal Server Error
 
-  /games/{gameId}:
+  /game/{gameId}:
     get:
       tags: 
         - games
@@ -167,47 +153,47 @@ paths:
           name: gameId
           required: true
           schema:
-            type: integer
-          description: ID of the game
+            type: string
+            description: ID of the game
       responses:
         '200':
           description: OK
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
         '404':
-          description: Not Found
+          description: Game not found
 
     patch:
       tags: 
         - games
-      summary: Update a game where the backend should save the guessed location input from the user as the end location of the game round.
+      summary: Update a game
+      description: Update a game where the backend should save the guessed location input from the user as the end location of the game round.
       parameters:
         - in: path
           name: gameId
           required: true
           schema:
-            type: integer
-          description: ID of the game
+            type: string
+            description: ID of the game to update
       requestBody:
         required: true
         content:
           application/json:
-            schema: # Same schema as for creating a game
-              type: object
-              properties:
-                guessedLocation:
-                  type: object
-                  properties:
-                    latitude:
-                      type: number
-                    longitude:
-                      type: number
-                  description: End location of the game round
-              required:
-                - guessedLocation
+            schema:
+              $ref: '#/components/schemas/UpdateGameRequest'
       responses:
-        '200':
-          description: OK
+        '201':
+          description: Game information updated successfully
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/Game'
         '404':
-          description: Not Found
+          description: Game not found
+        '400':
+          description: Invalid request
 
     delete:
       tags: 
@@ -218,10 +204,82 @@ paths:
           name: gameId
           required: true
           schema:
-            type: integer
-          description: ID of the game
+            type: string
+            description: ID of the game
       responses:
         '204':
           description: No Content
         '404':
-          description: Not Found
+          description: Game not found
+
+components:
+  schemas:
+    UpdateGameRequest:
+      type: object
+      properties:
+        latitude:
+          type: number
+          description: Latitude of the guessed location
+        longitude:
+          type: number
+          description: Longitude of the guessed location
+      required:
+        - latitude
+        - longitude
+
+    Game:
+      type: object
+      properties:
+        gameId:
+          type: string
+          description: ID of the game
+        userId:
+          type: string
+          description: ID of the user associated with the game
+        initialTime:
+          type: integer
+          description: Unix time of the game creation
+        initialLocation:
+          type: object
+          properties:
+            latitude:
+              type: number
+              description: Latitude of the initial location
+            longitude:
+              type: number
+              description: Longitude of the initial location
+        streetViewImage:
+          type: string
+          format: uri
+          description: URL of the street view image
+      required:
+        - gameId
+        - userId
+        - initialTime
+        - initialLocation
+        - streetViewImage
+
+    UpdateGameResponse:
+      allOf:
+        - $ref: '#/components/schemas/Game'
+        - type: object
+          properties:
+            endTime:
+              type: integer
+              description: Unix time when the game was updated
+            guessedLocation:
+              type: object
+              properties:
+                latitude:
+                  type: number
+                  description: Latitude of the guessed location
+                longitude:
+                  type: number
+                  description: Longitude of the guessed location
+              description: End location of the game round
+            distance:
+              type: integer
+              description: Distance between the guessed location and the initial location
+            isGuessCorrect:
+              type: boolean
+              description: Indicates whether the guessed location is correct
