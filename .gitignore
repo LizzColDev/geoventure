@@ -227,3 +227,6 @@ coverage
 **/key.json
 **/firebase-credentials.json
 
+**/firebase/data/
+**/firebase/logs/
+/cache
