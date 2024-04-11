@@ -27,3 +27,18 @@ services:
       - /app/node_modules
       - /app/dist
     working_dir: /app
+
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: geoventure-frontend-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app:rw
+      - /app/node_modules
+      - /app/dist
+    env_file:
+      - ./frontend/.env
+    working_dir: /app
