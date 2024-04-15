@@ -23,7 +23,43 @@ services:
       - "3000:3000"
     volumes:
       - ./backend:/app:rw
-      - ./backend/key.json:/app/key.json:ro
       - /app/node_modules
       - /app/dist
+    env_file:
+      - ./backend/.env
+    environment:
+      - FIRESTORE_EMULATOR_HOST=firebase-emulator:8080
+      - PUBSUB_EMULATOR_HOST=firebase-emulator:8085
+      - FUNCTIONS_EMULATOR_HOST=firebase-emulator:5001
+      - FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
     working_dir: /app
+
+  firebase-emulator:
+    build:
+      context: ./firebase
+      dockerfile: Dockerfile
+    container_name: firebase-emulator
+    ports:
+      - "4000:4000" # UI
+      - "4400:4400" # Hub
+      - "4600:4600" # Logging
+      - "5001:5001" # Functions
+      - "8080:8080" # Firestore
+      - "8085:8085" # PubSub
+      - "9000:9000" # Database
+      - "9099:9099" # Auth
+      - "9199:9199" # Storage
+      - "6000:6000" # Hosting
+      - "9005:9005"
+    volumes:
+      - ./firebase:/srv/firebase:rw
+      - ./cache:/root/.cache/:rw
+      - ~/.config/:/root/.config
+      - ./firebase/data:/srv/firebase/data:rw
+    environment:
+      - FIREBASE_AUTH_EMULATOR_HOST=172.22.0.2:9099
+      - FIRESTORE_EMULATOR_HOST=172.22.0.2:8080
+      - PUBSUB_EMULATOR_HOST=172.22.0.2:8085
+      - FUNCTIONS_EMULATOR_HOST=172.22.0.2:5001
+      - FIREBASE_PROJECT=geoventure-e3ca6
+      - DATA_DIRECTORY=./firebase/data
