@@ -35,7 +35,7 @@ Replace `<your_google_maps_api_key>` with your actual Google Maps API key. This 
 ```bash
 docker-compose up --build
 ```
-The frontend development server should now be running at `http://localhost:5173/`, and the backend server should be running at `http://localhost:5000/`.
+The frontend development server should now be running at `http://localhost:8080/`, and the backend server should be running at `http://localhost:3000/`.
 
 ### Game Instructions
 
