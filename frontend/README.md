@@ -1,27 +1,57 @@
-# React + TypeScript + Vite
+## Running the Application
 
-This template provides a minimal setup to get React working in Vite with HMR and some ESLint rules.
+### Prerequisites
 
-Currently, two official plugins are available:
+- **Node.js and npm**: Ensure you have Node.js and npm installed on your system.
+- **Docker**: Ensure you have Docker installed on your system.
 
-- [@vitejs/plugin-react](https://github.com/vitejs/vite-plugin-react/blob/main/packages/plugin-react/README.md) uses [Babel](https://babeljs.io/) for Fast Refresh
-- [@vitejs/plugin-react-swc](https://github.com/vitejs/vite-plugin-react-swc) uses [SWC](https://swc.rs/) for Fast Refresh
+### Installation and Setup
 
-## Expanding the ESLint configuration
+1. **Clone the Repository**:
 
-If you are developing a production application, we recommend updating the configuration to enable type aware lint rules:
+   Clone the repository to your local machine:
+   ```bash
+   git clone https://github.com/LizzColDev/geoventure.git
+   cd geoventure/frontend
+   ```
+2. **Configure the `.env` File**:
+   
+   Create a `.env` file in the root directory of your project and add the following line with your Google Maps API key:
+   ```bash
+   GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
+   ```
+## Starting the Application
 
-- Configure the top-level `parserOptions` property like this:
+### Locally (Without Docker)
+Once you have cloned the repository and configured the **`.env`** file:
 
-```js
-   parserOptions: {
-    ecmaVersion: 'latest',
-    sourceType: 'module',
-    project: ['./tsconfig.json', './tsconfig.node.json'],
-    tsconfigRootDir: __dirname,
-   },
-```
+1. **Install Dependencies**:
+   From the root directory of your project, run the following command to install dependencies:
+   ```bash
+   npm install
+   ```
+2. **Start the Application**:
+   Run the following command to start your application in development mode:
+   ```bash
+   npm run dev
+   ```
+This will start the Vite development server, and your application will be available at **`http://localhost:8080`** in your browser.
 
-- Replace `plugin:@typescript-eslint/recommended` to `plugin:@typescript-eslint/recommended-type-checked` or `plugin:@typescript-eslint/strict-type-checked`
-- Optionally add `plugin:@typescript-eslint/stylistic-type-checked`
-- Install [eslint-plugin-react](https://github.com/jsx-eslint/eslint-plugin-react) and add `plugin:react/recommended` & `plugin:react/jsx-runtime` to the `extends` list
+### Running with Docker Compose
+
+Ensure you have an **`.env`** file in the root directory of your project with the Google Maps API key configured.
+
+1. **Build and run the application using Docker Compose:**
+   
+   From the root directory of your project, run the following command to start your defined services using Docker Compose:
+   ```bash
+   docker-compose up --build
+   ```
+The frontend development server should now be running at **`http://localhost:8080`**
+
+## Accessing the Application
+   Once the application is running:
+- **Locally (Without Docker)**: Access your application at **`http://localhost:8080`** in your browser.
+- **With Docker Compose**: Access your application at **`http://localhost:8080`** in your browser.
+
+
