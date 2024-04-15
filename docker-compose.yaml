@@ -34,6 +34,21 @@ services:
       - FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
     working_dir: /app
 
+  frontend:
+    build:
+      context: ./frontend
+      dockerfile: Dockerfile
+    container_name: geoventure-frontend-app
+    ports:
+      - "8080:8080"
+    volumes:
+      - ./frontend:/app:rw
+      - /app/node_modules
+      - /app/dist
+    env_file:
+      - ./frontend/.env
+    working_dir: /app
+
   firebase-emulator:
     build:
       context: ./firebase
