@@ -27,11 +27,6 @@ services:
       - /app/dist
     env_file:
       - ./backend/.env
-    environment:
-      - FIRESTORE_EMULATOR_HOST=firebase-emulator:8080
-      - PUBSUB_EMULATOR_HOST=firebase-emulator:8085
-      - FUNCTIONS_EMULATOR_HOST=firebase-emulator:5001
-      - FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
     working_dir: /app
 
   frontend:
