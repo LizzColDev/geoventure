@@ -1,35 +1,45 @@
 import * as path from 'path';
 import * as admin from 'firebase-admin';
 
-// Function to retrieve Firebase credentials based on environment variables or key file
-const getFirebaseCredentials = () => {
-  if (process.env.FIREBASE_CREDENTIALS) { 
-    // Parse credentials from environment variable
-    return JSON.parse(process.env.FIREBASE_CREDENTIALS);
-  } else if (process.env.FIREBASE_EMULATOR_HOST) {
-    // Using the emulator, no real credentials needed
-    return null;
-  } else {
-    // Load credentials from key.json file
-    const keyJsonPath = path.resolve(__dirname, '../key.json');
-    try {
-      return require(keyJsonPath);
-    } catch (error) {
-      console.error(`Error loading Firebase credentials from ${keyJsonPath}:`, error);
-      return null;
+const initializeFirebaseApp = async () => {
+  try {
+    let serviceAccountKey = null;
+
+    // Check if Firebase credentials are provided via environment variable
+    if (process.env.FIREBASE_CREDENTIALS) {
+      serviceAccountKey = JSON.parse(process.env.FIREBASE_CREDENTIALS);
+      console.log('Firebase credentials found. Using Firebase.');
+    } else {
+      // Load Firebase credentials from a key.json file
+      const keyJsonPath = path.resolve(__dirname, '../key.json');
+      serviceAccountKey = require(keyJsonPath);
+      console.log('Firebase credentials found. Using Firebase.');
     }
+    // Initialize Firebase Admin SDK with the retrieved credentials
+    if (serviceAccountKey) {
+      admin.initializeApp({
+        credential: admin.credential.cert(serviceAccountKey as admin.ServiceAccount),
+      });
+    } else {
+      throw new Error('Failed to initialize Firebase credentials.');
+    }
+  } catch (error) {
+    console.error('Error initializing Firebase:', error);
+    
+    // Fallback to Firestore emulator configuration if Firebase initialization fails
+    const projectId = process.env.FIREBASE_PROJECT
+    const firestoreHost = process.env.FIRESTORE_EMULATOR_HOST;
+
+    console.log('Using Firestore emulator.');
+    admin.initializeApp({
+      credential: admin.credential.applicationDefault(),
+      projectId: projectId,
+      databaseURL: `http://${firestoreHost}?ns=${projectId}`
+    });
   }
 };
 
-const serviceAccountKey = getFirebaseCredentials();
-
-if (serviceAccountKey || process.env.FIREBASE_EMULATOR_HOST) {
-  // Initialize Firebase Admin SDK with credentials or emulator settings
-  admin.initializeApp({
-    credential: serviceAccountKey ?
-      admin.credential.cert(serviceAccountKey as admin.ServiceAccount) :
-      admin.credential.applicationDefault(), 
-  });
-}
+// Initialize Firebase app and handle success/failure
+initializeFirebaseApp()
 
 export default admin;

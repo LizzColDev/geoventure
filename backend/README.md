@@ -9,7 +9,7 @@ This repository contains the backend code for the Geoventure Game application. T
    - [Development Tools and Best Practices](#development-tools-and-best-practices)
    - [Credentials Configuration](#credentials-configuration)
    - [Running GitHub Actions Locally](#running-github-actions-locally)
-   - [Docker Compose](#docker-compose)
+   - [Build and Run Docker Compose](#build-and-run-docker-compose)
 3. [Development](#development)
 4. [API Endpoints](#api-endpoints)
 
@@ -78,7 +78,7 @@ Create a file named `.env` in the root of your project. This file will store sen
 
 
 Content of `.env`:
-```bash
+```dotenv
 FIREBASE_CREDENTIALS_PATH=./key.json
 GOOGLE_MAPS_API_KEY=your_google_maps_api_key_here
 ```
@@ -101,20 +101,45 @@ act -j continuous-integration
 ```
 Note: This step will require the prior setup of the [secrets](https://docs.github.com/en/actions/security-guides/encrypted-secrets) necessary in your local environment.
 
-## Docker Compose
+## Build and Run Docker Compose
 
 To build and run the backend using Docker Compose, follow these steps:
 
-1. Build and run the Docker container:
+1. **Configure Environment Variables (Optional for Firebase Emulator)**:
 
-```bash
-docker-compose up --build
-```
-The backend server will be accessible at `http://localhost:3000/`.
+   Before building the Docker container, you can optionally configure environment variables specific to the Firebase emulator by creating a `.env` file in the root of your project with the following content:
+
+   ```dotenv
+   # Variables for Docker Firebase Emulator
+   FIRESTORE_EMULATOR_HOST=firebase-emulator:8082
+   PUBSUB_EMULATOR_HOST=firebase-emulator:8085
+   FUNCTIONS_EMULATOR_HOST=firebase-emulator:5001
+   FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
+   ```
+
+   These variables configure connections to the emulated Firebase services. They will be automatically picked up by Docker Compose when you run the services.
+
+2. **Build and run the Docker container:**
+
+   ```bash
+   docker compose up --build firebae-emulator backend
+   ```
+
+   This command will start both the backend service **`(geoventure-backend-app)`** and the Firebase emulator **`(firebase-emulator)`**. The backend service will be accessible at  **`http://localhost:3000/`**.
+
+3. **Accessing Firebase Emulator UI**
+   You can access the Firebase Emulator UI in your web browser by visiting the following URLs after starting the Firebase emulator services:
+
+   - **Firestore**: [http://localhost:8082](http://localhost:8082)
+   - **PubSub**: [http://localhost:8085](http://localhost:8085)
+   - **Functions**: [http://localhost:5001](http://localhost:5001)
+   - **Auth**: [http://localhost:9099](http://localhost:9099)
+
+   These URLs will allow you to interact with the Firebase emulators for testing and development purposes.
 
 ## Development
 
-To start the development server, run the following command:
+To start the development server without Docker Compose, you can run the following command:
 
 ```bash
 npm run dev

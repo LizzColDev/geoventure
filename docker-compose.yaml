@@ -27,11 +27,6 @@ services:
       - /app/dist
     env_file:
       - ./backend/.env
-    environment:
-      - FIRESTORE_EMULATOR_HOST=firebase-emulator:8080
-      - PUBSUB_EMULATOR_HOST=firebase-emulator:8085
-      - FUNCTIONS_EMULATOR_HOST=firebase-emulator:5001
-      - FIREBASE_AUTH_EMULATOR_HOST=firebase-emulator:9099
     working_dir: /app
 
   frontend:
@@ -59,7 +54,7 @@ services:
       - "4400:4400" # Hub
       - "4600:4600" # Logging
       - "5001:5001" # Functions
-      - "8080:8080" # Firestore
+      - "8082:8082" # Firestore
       - "8085:8085" # PubSub
       - "9000:9000" # Database
       - "9099:9099" # Auth
@@ -73,7 +68,7 @@ services:
       - ./firebase/data:/srv/firebase/data:rw
     environment:
       - FIREBASE_AUTH_EMULATOR_HOST=172.22.0.2:9099
-      - FIRESTORE_EMULATOR_HOST=172.22.0.2:8080
+      - FIRESTORE_EMULATOR_HOST=172.22.0.2:8082
       - PUBSUB_EMULATOR_HOST=172.22.0.2:8085
       - FUNCTIONS_EMULATOR_HOST=172.22.0.2:5001
       - FIREBASE_PROJECT=geoventure-e3ca6
