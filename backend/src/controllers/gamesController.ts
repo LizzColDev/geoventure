@@ -53,7 +53,7 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
       );
     }
     res.status(201).send({
-      gameId: gameRef.id,
+      id: gameRef.id,
       ...gameData,
     });
     console.log(`Game created successfully - Game ID: ${gameRef.id}`);
