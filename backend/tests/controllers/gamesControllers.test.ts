@@ -69,7 +69,7 @@ describe("Games Controller - POST /games", () => {
     expect(res.send).toHaveBeenCalledWith(
       expect.objectContaining({ 
         userId: mockUserId,
-        gameId: mockGameId,
+        id: mockGameId,
         initialTime: expect.any(Number),
         streetViewInfo: mockStreetViewImage,
       })
