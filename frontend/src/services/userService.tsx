@@ -7,7 +7,7 @@ const api = axios.create({
 });
 
 // Function to create a new user and return UserData
-export const createuser = async (UserData: Omit<UserData, 'id'>): Promise<UserData> => {
+export const createUser = async (UserData: Omit<UserData, 'id'>): Promise<UserData> => {
   try {
     const response: AxiosResponse<UserData> = await api.post('/user', UserData);
     return response.data;

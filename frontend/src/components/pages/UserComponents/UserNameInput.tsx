@@ -1,9 +1,9 @@
 import React, { useState } from 'react';
 import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
-import { createUser } from '../../services/userService';
-import { createGame } from '../../services/gameService';
-import { GameData } from '../../types/types';
+import { createUser } from '../../../services/userService';
+import { createGame } from '../../../services/gameService';
+import { GameData } from '../../../types/types';
 
 interface UsernameInputProps {
   onGameAvailable: (gameData: GameData, userName: string) => void;
