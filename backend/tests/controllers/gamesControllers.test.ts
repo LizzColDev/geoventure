@@ -1,7 +1,7 @@
 import { Request, Response, NextFunction } from "express";
 import * as geolib from 'geolib';
 import createError from "http-errors";
-import { getStreetViewImage } from "../../src/services/streetviewService";
+import { searchFamousPlace } from "../../src/services/streetviewService";
 import { UserData } from '../../src/types';
 import {
   createFirebaseMock,
@@ -16,8 +16,7 @@ jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
   generateRandomLocation: jest.fn(() => ({ latitude: 1, longitude: 2 })),
 }));
 jest.mock("../../src/services/streetviewService", () => ({
-  getStreetViewImage : jest.fn(() => ({
-    urlImage: "data:image/jpeg;base64,/test",
+  searchFamousPlace : jest.fn(() => ({
     initialLocation: {
       latitude: 1,
       longitude: 2
@@ -36,7 +35,7 @@ const mockUserId = "user1";
 const mockGameId = "idTestGame";
 const mockUnexistedGame = "unExistedGame"
 const mockLocation = { latitude: 1, longitude: 2};
-const mockStreetViewImage = getStreetViewImage();
+const mockStreetViewImage = searchFamousPlace(true);
 
 beforeEach(() => {
   jest.clearAllMocks();
