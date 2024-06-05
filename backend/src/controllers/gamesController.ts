@@ -4,7 +4,7 @@ import Joi from "joi";
 import * as geolib from 'geolib';
 import admin from "../../config/firebase";
 import { GameData } from "../types";
-import { getStreetViewImage } from "../services/streetviewService";
+import { searchFamousPlace } from "../services/streetviewService";
 
 const db = admin.firestore();
 
@@ -38,14 +38,15 @@ export const createGame = async (req: Request, res: Response, next: NextFunction
 
     const currentTime = new Date().getTime()
     
-    const streetviewImage = await getStreetViewImage();
-    
+    const famousLocations = await searchFamousPlace();
+    const firstLocation = famousLocations[0];
+
     const gameData = {
       userId: userId,
       initialTime: currentTime,
-      streetViewInfo: streetviewImage,
+      streetViewInfo: firstLocation
     };
-
+    
     const gameRef = await db.collection("games").add(gameData);
     if (!gameRef.id) {
       return next(
@@ -124,6 +125,7 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
     
     const currentTime = Date.now();     
     const guessedLocation = { latitude, longitude };
+    const gameData = gameDoc.data() as GameData;
     const initialLocation = gameDoc.data()?.streetViewInfo.initialLocation;
 
     if (!initialLocation) {
@@ -131,21 +133,46 @@ export const updateGameById =async (req:Request, res: Response, next: NextFuncti
     }
     const distance = geolib.getDistance(guessedLocation, initialLocation);
 
-    const distanceThreshold = 100;
+    const distanceThreshold = 1000;
 
     const isGuessCorrect = distance <= distanceThreshold;
+      let gamesWon = gameData.gamesWon || 0;
 
-    const gameData = {
-      endTime: currentTime, 
-      guessedLocation: guessedLocation,
-      distance,
-      isGuessCorrect,
-      ...gameDoc.data()
-    };
+
+    if (isGuessCorrect) {
+      // Get the next location
+
+      gamesWon = gamesWon + 1;
+      const famousLocations = await searchFamousPlace();
+
+      const nextLocation = famousLocations[gamesWon];
+      
+      gameData.streetViewInfo = {
+        initialLocation: nextLocation.initialLocation,
+        namePlace: nextLocation.namePlace
+      };
+      gameData.initialTime = currentTime;
+    }
+
+    gameData.guessedLocation = guessedLocation;
+    gameData.endTime = currentTime;
+    gameData.gamesWon = gamesWon;
 
     await gameRef.set(gameData)
 
-    res.status(201).json({id: gameDoc.id, ...gameData });
+    const responseData = {
+      id: gameDoc.id,
+      isGuessCorrect,
+      distance,
+      initialTime: gameData.initialTime,
+      streetViewInfo: gameData.streetViewInfo,
+      userId: gameData.userId,
+      guessedLocation: gameData.guessedLocation,
+      endTime: gameData.endTime,
+      gamesWon: gameData.gamesWon
+    };
+
+    res.status(200).json(responseData);
 
     console.log(`Game updated successfully - Game ID: ${gameDoc.id}`);
   } catch (error) {

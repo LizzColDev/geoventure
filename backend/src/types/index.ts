@@ -4,7 +4,6 @@ export interface Coordinates {
 }
 
 export interface StreetViewInfo {
-  urlImage?: string;
   initialLocation: Coordinates;
   namePlace?: string;
 }
@@ -15,6 +14,7 @@ export interface GameData {
   endTime: number;
   initialTime: number;
   userId: string;
+  gamesWon: number;
   guessedLocation?: Coordinates;
 	streetViewInfo?: StreetViewInfo;
 }
