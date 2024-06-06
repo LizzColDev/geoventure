@@ -14,11 +14,15 @@ const App: React.FC = () => {
     setUsernameInputVisible(false)
   };
 
+    const handleUpdateGameData = (updatedGameData: GameData) => {
+    setGameData(updatedGameData);
+  };
+
   return (
     <div className="App">
       {usernameInputVisible && <UsernameInput onGameAvailable={handleGameAvailable} />}
       {gameData && (
-        <GuessLocationPage gameData={gameData} />
+        <GuessLocationPage gameData={gameData}  onUpdateGameData={handleUpdateGameData}/>
       )}
     </div>
     
