@@ -16,7 +16,8 @@ export interface GameData {
   initialTime: number;
   userId: string;
   guessedLocation?: Coordinates;
-	streetViewInfo?: StreetViewInfo;
+  streetViewInfo: StreetViewInfo;
+  isGuessCorrect?: boolean;
 }
 
 export interface UserData {
