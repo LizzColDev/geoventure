@@ -1,0 +1,19 @@
+nav.nav-footer {
+  position: fixed;
+  bottom: 0;
+  width: 100%;
+  background-color: transparent!important; 
+  z-index: 1000;
+  padding-bottom: 30px;
+}
+
+nav.nav-footer .container {
+  height: 100%;
+  background-color: rgba(32, 45, 115, 0.5);
+  border-radius: 20px;
+  width: 60%;
+}
+
+nav.nav-footer .container > * {
+  margin: auto;
+}

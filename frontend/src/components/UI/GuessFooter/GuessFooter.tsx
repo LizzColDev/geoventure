@@ -1,5 +1,6 @@
-import { Button, Container, Navbar } from 'react-bootstrap';
-import './index.css'
+import { Container, Navbar } from 'react-bootstrap';
+import './GuessFooter.css'
+import CustomButton from '../../common/CustomButton/CustomButton';
 
 interface NavProps {
   handleGuess: () => void;
@@ -11,9 +12,9 @@ const GuessFooter: React.FC<NavProps> = ({ handleGuess }) => {
       <Container className="d-flex justify-content-center h-100 align-items-center">
         <Navbar.Toggle />
         <Navbar.Collapse className="justify-content-center">
-          <Button className="guess-button" onClick={handleGuess}>
-            Guess
-          </Button>
+          <CustomButton variant="primary" onClick={handleGuess}>
+              Guess
+          </CustomButton>
         </Navbar.Collapse>
       </Container>
     </Navbar>

@@ -1,0 +1,34 @@
+button.custom-button {
+  background-color: var(--info-color);
+  border: none;
+  color: #202D73;
+  padding: 10px 20px;
+  font-size: 1rem;
+  border-radius: 10px;
+  transition: background-color 0.3s ease;
+  font-weight: bold;
+  margin: 10px;
+}
+
+button.custom-button:hover {
+  background-color: var(--success-color);
+  color: white; 
+}
+
+button.custom-button-secondary {
+  background-color: var(--danger-color);
+  color: white;
+}
+
+button.custom-button-secondary:hover {
+  background-color: var(--warning-color);
+}
+
+button.custom-button-success {
+  background-color: var(--primary-color);
+  color: white; 
+}
+
+button.custom-button-success:hover {
+  background-color: var(--secondary-color);
+}
