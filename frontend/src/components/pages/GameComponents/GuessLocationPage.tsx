@@ -5,6 +5,7 @@ import { createGame, deleteGame, updateGame } from '../../../services/gameServic
 import { deleteUser } from '../../../services/userService';
 import { initGoogleMaps } from '../../../services/externalAPIs/googleMapsService';
 import './GameComponents.css'
+import GuessFooter from '../../UI/GuessFooter';
 
 interface GuessLocationPageProps {
   gameData: GameData;
@@ -131,9 +132,7 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
           <div id="pano" className="position-absolute pano-container">
             <div id="map" className="position-absolute map-container "></div>
           </div>
-          <Button className="position-absolute guess-button" onClick={handleGuess}>
-            Guess
-          </Button>
+          <GuessFooter handleGuess={handleGuess}/>
         </div>
       )}
       <Modal show={showModal} onHide={() => setShowModal(false)}>
