@@ -17,9 +17,3 @@
   bottom: 130px;
   right: 10px;
 }
-
-.guess-button {
-  z-index: 3;
-  bottom: 20px;
-  border: 20px solid var(--warning-color);
-}
