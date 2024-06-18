@@ -1,9 +1,10 @@
 import React, { useState } from 'react';
-import Button from 'react-bootstrap/Button';
 import Form from 'react-bootstrap/Form';
 import { createUser } from '../../../services/userService';
 import { createGame } from '../../../services/gameService';
 import { GameData } from '../../../types/types';
+import CustomButton from '../../common/CustomButton/CustomButton';
+import './UserNameInput.css';
 
 interface UsernameInputProps {
   onGameAvailable: (gameData: GameData, userName: string) => void;
@@ -46,19 +47,20 @@ const UsernameInput: React.FC<UsernameInputProps> = ({ onGameAvailable }) => {
   };
 
   return (
-      <Form onSubmit={handleSubmit}>
+      <Form onSubmit={handleSubmit} className="form-container">
         <Form.Group className="mb-3" controlId="nameUser">
-          <Form.Label>What's Your Name?</Form.Label>
+          <Form.Label className="form-label">Enter Your Name or Nickname:</Form.Label>
           <Form.Control
             type="text"
-            placeholder="Enter your name here..."
+            placeholder="Enter your Name or Nickname here..."
             value={username}
             onChange={(e) => setUsername(e.target.value)}
+            className="form-control"
           />
         </Form.Group>
-        <Button variant="primary" type="submit">
+        <CustomButton variant="primary" type="submit">
           Start Playing!
-        </Button>
+        </CustomButton>
       </Form>
   );
 };

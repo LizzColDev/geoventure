@@ -1,0 +1,36 @@
+.form-container {
+  padding: 20px;
+  width: 80%;
+  display: inline-block;
+}
+
+.form-label {
+  color: var(--info-color);
+  font-size: xx-large;
+}
+
+input.form-control {
+  border: 3px solid var(--info-color);
+}
+
+.form-control:focus {
+  border-color: var(--info-color);
+  box-shadow: 0 0 0 0.2rem rgba(242, 198, 65, 0.25);
+}
+
+.btn-primary {
+  background-color: var(--secondary-color);
+  border-color: var(--secondary-color);
+}
+
+.btn-primary:hover {
+  background-color: var(--info-color);
+  border-color: var(--info-color);
+}
+
+.btn-primary:focus,
+.btn-primary:active {
+  background-color: var(--info-color) !important;
+  border-color: var(--info-color) !important;
+  box-shadow: 0 0 0 0.2rem rgba(242, 198, 65, 0.25);
+}
