@@ -8,7 +8,7 @@ nav.nav-footer {
   transition: transform 0.3s ease;
 }
 
-.nav-footer:hover {
+nav.nav-footer:hover {
   transform: translateY(-5px);
 }
 
