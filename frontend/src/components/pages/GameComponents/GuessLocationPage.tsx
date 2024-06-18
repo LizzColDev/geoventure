@@ -1,12 +1,12 @@
 import React, { useEffect, useState } from 'react';
-import {Card, Modal} from 'react-bootstrap';
+import {Card} from 'react-bootstrap';
 import { Coordinates, GameData } from '../../../types/types';
 import { createGame, deleteGame, updateGame } from '../../../services/gameService';
 import { deleteUser } from '../../../services/userService';
 import { initGoogleMaps } from '../../../services/externalAPIs/googleMapsService';
 import './GameComponents.css'
-import CustomButton from '../../common/CustomButton/CustomButton';
 import GuessFooter from '../../UI/GuessFooter/GuessFooter';
+import ModalMessage from '../../common/ModalMessage/ModalMessage';
 
 interface GuessLocationPageProps {
   gameData: GameData;
@@ -136,19 +136,14 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
           <GuessFooter handleGuess={handleGuess}/>
         </div>
       )}
-      <Modal show={showModal} onHide={() => setShowModal(false)}>
-        <Modal.Header closeButton>
-          <Modal.Title>{modalMessage}</Modal.Title>
-        </Modal.Header>
-        <Modal.Footer>
-          <CustomButton variant="success" onClick={() => handleModalAction('continuePlaying')}>
-            Continue Playing
-          </CustomButton>
-          <CustomButton variant="secondary" onClick={() => handleModalAction('exit')}>
-            Exit
-          </CustomButton>
-        </Modal.Footer>
-      </Modal>
+      <ModalMessage
+        show={showModal}
+        message={modalMessage}
+        onHide={() => setShowModal(false)}
+        onContinue={() => handleModalAction('continuePlaying')}
+        onExit={() => handleModalAction('exit')}
+        showContinueButton={true}
+      />
     </Card>
   );
 }

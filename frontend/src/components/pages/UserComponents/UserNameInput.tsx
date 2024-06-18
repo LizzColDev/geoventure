@@ -4,6 +4,7 @@ import { createUser } from '../../../services/userService';
 import { createGame } from '../../../services/gameService';
 import { GameData } from '../../../types/types';
 import CustomButton from '../../common/CustomButton/CustomButton';
+import ModalMessage from '../../common/ModalMessage/ModalMessage';
 import './UserNameInput.css';
 
 interface UsernameInputProps {
@@ -13,6 +14,7 @@ interface UsernameInputProps {
 const UsernameInput: React.FC<UsernameInputProps> = ({ onGameAvailable }) => {
   // State for storing the username
   const [username, setUsername] = useState<string>('');
+  const [showModal, setShowModal] = useState(false);
 
   // Function to handle form submission
   const handleSubmit = async (event: React.FormEvent<HTMLFormElement>) => {
@@ -20,7 +22,7 @@ const UsernameInput: React.FC<UsernameInputProps> = ({ onGameAvailable }) => {
 
     // Check if username is not empty
     if (!username.trim()) {
-      alert('Please enter a valid name.');
+      setShowModal(true);
       return;
     }
 
@@ -47,6 +49,7 @@ const UsernameInput: React.FC<UsernameInputProps> = ({ onGameAvailable }) => {
   };
 
   return (
+    <>
       <Form onSubmit={handleSubmit} className="form-container">
         <Form.Group className="mb-3" controlId="nameUser">
           <Form.Label className="form-label">Enter Your Name or Nickname:</Form.Label>
@@ -62,6 +65,13 @@ const UsernameInput: React.FC<UsernameInputProps> = ({ onGameAvailable }) => {
           Start Playing!
         </CustomButton>
       </Form>
+      <ModalMessage
+        show={showModal}
+        message="Please enter a valid name."
+        onHide={() => setShowModal(false)}
+        onExit={() => setShowModal(false)}
+      />
+  </>
   );
 };
 

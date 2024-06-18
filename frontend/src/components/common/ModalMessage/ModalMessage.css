@@ -1,0 +1,8 @@
+div.modal-header-container {
+  color: var(--warning-color);
+}
+
+div.modal-footer-container {
+  background-color: var(--info-color);
+}
+
