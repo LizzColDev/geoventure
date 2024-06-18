@@ -21,7 +21,7 @@ const App: React.FC = () => {
 
   return (
     <div className="App">
-      <GeoVentureNavBar/>
+      <GeoVentureNavBar gameData={gameData} />
       {usernameInputVisible && <UsernameInput onGameAvailable={handleGameAvailable} />}
       {gameData && (
         <GuessLocationPage gameData={gameData}  onUpdateGameData={handleUpdateGameData}/>

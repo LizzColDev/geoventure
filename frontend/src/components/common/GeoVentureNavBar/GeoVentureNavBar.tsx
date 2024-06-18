@@ -1,15 +1,33 @@
-import Container from 'react-bootstrap/Container';
-import Navbar from 'react-bootstrap/Navbar';
+import React from 'react';
+import {Navbar, Container} from 'react-bootstrap';
 import icon from '../../../assets/icon.png'
 import logo from '../../../assets/logo.png'
-import './GeoVentureNavBar.css'
+import { GameData } from '../../../types/types';
+import { deleteGame } from '../../../services/gameService';
+import { deleteUser } from '../../../services/userService';
+import './GeoVentureNavBar.css';
 
-function GeoVentureNavBar() {
+interface GeoVentureNavBarprops {
+  gameData: GameData | null;
+}
+
+const GeoVentureNavBar: React.FC<GeoVentureNavBarprops> = ({ gameData }) => {
+  
+  const redirectToHomePage = async () => {
+    if (gameData) {
+      await deleteGame(gameData.id);
+      await deleteUser(gameData.userId);
+    }
+    window.location.href = '/';
+  };
+
   return (
     <>
       <Navbar className="nav-icon bg-body-tertiary">
         <Container>
-          <Navbar.Brand>
+          <Navbar.Brand
+            style={{ cursor: 'pointer' }}
+            onClick={redirectToHomePage}>
             <img
               alt=""
               src={icon}
