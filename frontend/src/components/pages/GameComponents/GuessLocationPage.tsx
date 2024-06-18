@@ -37,7 +37,7 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
       // Create panorama instance
       const panoramaInstance = new StreetViewPanorama( document.getElementById('pano') as HTMLElement, {
         position: { lat: initialLocation.latitude, lng: initialLocation.longitude },
-        pov: { heading: 34, pitch: 10 },
+        pov: { heading: 34, pitch: 4 },
         addressControl: false,
       });
 
