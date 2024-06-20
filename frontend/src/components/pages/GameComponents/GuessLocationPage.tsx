@@ -32,6 +32,7 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
         center: { lat: 28.17613436963845, lng: -10.684843766854517 },
         zoom: 1,
         streetViewControl: false,
+        draggableCursor: 'crosshair',
       });
 
       // Create panorama instance

@@ -16,11 +16,15 @@
   bottom: 130px;
   right: 10px;
   border-radius: 20px;
-  opacity: 0.8;
+  opacity: 0.7;
+  transition: opacity 0.3s ease, width 0.3s ease, height 0.3s ease, box-shadow 0.3s ease;
 }
 
 .map-container:hover {
   opacity: 1;
+  width: 300px;
+  height: 260px;
+  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.3);
 }
 
 @media all and (min-width: 1024px) { 
@@ -28,12 +32,22 @@
     width: 350px;
     height: 250px;
   }
+
+  .map-container:hover {
+    width: 600px;
+    height: 400px;
+  }
 }
 
 @media all and (min-width: 480px) and (max-width: 1024px) {
   .map-container {
     width: 300px;
     height: 200px;
+  }
+
+  .map-container:hover {
+    width: 450px;
+    height: 300px;
   }
 }
 
