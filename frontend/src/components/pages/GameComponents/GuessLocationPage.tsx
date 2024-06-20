@@ -16,7 +16,6 @@ interface GuessLocationPageProps {
 const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdateGameData }) => {
   const [initialLocation, setInitialLocation] = useState<Coordinates>(gameData.streetViewInfo.initialLocation);
   const [guessedLocation, setGuessedLocation] = useState<Coordinates | null>(null);
-  const [correctGuesses, setCorrectGuesses] = useState(0);
   const [showModal, setShowModal] = useState(false);
   const [modalMessage, setModalMessage] = useState('');
 
@@ -77,12 +76,10 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
       // Update game
       const response = await updateGame(updatedGame as GameData);
       
+      
       if (response.isGuessCorrect && response.streetViewInfo) {
-        // Increase correct guess count
-        setCorrectGuesses(prev => prev + 1);
         
-        // If correct guesses reach 5, show congratulatory message
-        if (correctGuesses + 1 === 5) {
+        if (response.gamesWon === 4) {
           setModalMessage('Congratulations! You passed to the next level!');
           setShowModal(true);
         }
@@ -94,7 +91,6 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
         // If guess is incorrect, show error message
         setModalMessage('Sorry, your guess was incorrect. Try again!');
         setShowModal(true);
-        setCorrectGuesses(0); // Reset correct guess count
       }
   };
 
@@ -102,8 +98,10 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
   const handleModalAction = async (action: string) => {
     setShowModal(false); // Close the modal
     if (action === 'continuePlaying') {
-      console.log("correctgessw; ", correctGuesses)
-      if (correctGuesses === 0) {
+      if (gameData.gamesWon === 4) {
+        // Continue to the next level
+        setInitialLocation(gameData.streetViewInfo.initialLocation);
+      } else { 
         await deleteGame(gameData.id); // Delete the existing game
 
         // Create a new game for the same user
@@ -111,13 +109,7 @@ const GuessLocationPage: React.FC<GuessLocationPageProps> = ({ gameData, onUpdat
 
         // Update the game data with the new game
         onUpdateGameData(newGame);
-        // Reset correct guess count and show first image
-        setCorrectGuesses(0);
         setInitialLocation(newGame.streetViewInfo.initialLocation);
-      } else {
-        // Continue to the next level
-        setInitialLocation(gameData.streetViewInfo.initialLocation);
-        setCorrectGuesses(1);
       }
     } else if (action === 'exit') {
       await deleteGame(gameData.id); // Delete the existing game
