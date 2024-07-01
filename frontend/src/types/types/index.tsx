@@ -10,6 +10,7 @@ export interface StreetViewInfo {
 }
 
 export interface GameData {
+  gamesWon: number;
   exists: boolean;
   id: string;
   endTime: number;
