@@ -1,7 +1,6 @@
 import { GameData, UserData, StreetViewInfo } from "../../src/types";
 
 const streetViewData: StreetViewInfo = {
-  urlImage: "data:image/jpeg;base64,/test",
   initialLocation: {
     latitude: 1,
     longitude: 2
@@ -17,6 +16,7 @@ const generateUserData = (): UserData[] => [
 
 const generateGameData = (): GameData[] => [
   {
+    gamesWon: 1,
     exists: true,
     id: "gameId1",
     initialTime: 123,
@@ -26,6 +26,7 @@ const generateGameData = (): GameData[] => [
     streetViewInfo: streetViewData
   },
   {
+    gamesWon: 1,
     exists: true,
     id: "gameId2",
     initialTime: 1234,

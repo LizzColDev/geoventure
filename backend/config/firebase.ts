@@ -25,16 +25,13 @@ const initializeFirebaseApp = async () => {
     }
   } catch (error) {
     console.error('Error initializing Firebase:', error);
-    
+
     // Fallback to Firestore emulator configuration if Firebase initialization fails
-    const projectId = process.env.FIREBASE_PROJECT
-    const firestoreHost = process.env.FIRESTORE_EMULATOR_HOST;
+    const projectId = process.env.FIREBASE_PROJECT;
 
     console.log('Using Firestore emulator.');
     admin.initializeApp({
-      credential: admin.credential.applicationDefault(),
       projectId: projectId,
-      databaseURL: `http://${firestoreHost}?ns=${projectId}`
     });
   }
 };

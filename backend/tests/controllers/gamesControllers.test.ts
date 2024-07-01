@@ -1,8 +1,8 @@
 import { Request, Response, NextFunction } from "express";
 import * as geolib from 'geolib';
 import createError from "http-errors";
-import { getStreetViewImage } from "../../src/services/streetviewService";
-import { UserData } from '../../src/types';
+import { searchFamousPlace } from "../../src/services/streetviewService";
+import { StreetViewInfo, UserData } from '../../src/types';
 import {
   createFirebaseMock,
   addMock,
@@ -16,14 +16,22 @@ jest.mock("../../src/utils/location/generatedRandomLocation", () => ({
   generateRandomLocation: jest.fn(() => ({ latitude: 1, longitude: 2 })),
 }));
 jest.mock("../../src/services/streetviewService", () => ({
-  getStreetViewImage : jest.fn(() => ({
-    urlImage: "data:image/jpeg;base64,/test",
-    initialLocation: {
-      latitude: 1,
-      longitude: 2
+  searchFamousPlace: jest.fn().mockResolvedValue([
+    {
+      initialLocation: {
+        latitude: 1,
+        longitude: 2
+      },
+      namePlace: "Place test"
     },
-    namePlace: "Place test"
-  })),
+    {
+      initialLocation: {
+        latitude: 2,
+        longitude: 3
+      },
+      namePlace: "Place2 test"
+    }
+  ])
 }))
 jest.mock('geolib', () => ({ getDistance: jest.fn() }));
 
@@ -36,7 +44,11 @@ const mockUserId = "user1";
 const mockGameId = "idTestGame";
 const mockUnexistedGame = "unExistedGame"
 const mockLocation = { latitude: 1, longitude: 2};
-const mockStreetViewImage = getStreetViewImage();
+let mockStreetViewImage: StreetViewInfo;
+
+beforeAll(async () => {
+  mockStreetViewImage = (await searchFamousPlace())[0];
+});
 
 beforeEach(() => {
   jest.clearAllMocks();
@@ -134,6 +146,7 @@ describe("GET /games", () =>{
         id: "gameId1",
         initialTime: 123,
         endTime: 345,
+        gamesWon: 1,
         userId: "test user id 1",
         guessedLocation: mockLocation,
         streetViewInfo: mockStreetViewImage,
@@ -142,6 +155,7 @@ describe("GET /games", () =>{
         id: "gameId2",
         initialTime: 1234,
         endTime: 456,
+        gamesWon: 1,
         userId: "test user id 2",
         guessedLocation: mockLocation,
         streetViewInfo: mockStreetViewImage,
@@ -210,8 +224,9 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
     (geolib.getDistance as jest.Mock).mockReturnValue(50);
 
     await updateGameById(req, res, next);
+    mockStreetViewImage = (await searchFamousPlace())[1];
     expect(getByIdMock).toHaveBeenCalledWith(mockGameId, 'games');
-    expect(res.status).toHaveBeenCalledWith(201);
+    expect(res.status).toHaveBeenCalledWith(200);
 
     const endTime = (res.json as jest.Mock).mock.calls[0][0]?.endTime;
     expect(endTime).toBeGreaterThan(Date.now() - 1000);
@@ -226,6 +241,7 @@ describe("Games Controllers - PATCH /game/:gameId", () => {
       distance: 50,
       isGuessCorrect: true,
       streetViewInfo: mockStreetViewImage,
+      gamesWon: 1
     });
 
     expect(next).not.toHaveBeenCalled();

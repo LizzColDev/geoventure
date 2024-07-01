@@ -10,13 +10,15 @@ export interface StreetViewInfo {
 }
 
 export interface GameData {
+  gamesWon: number;
   exists: boolean;
   id: string;
   endTime: number;
   initialTime: number;
   userId: string;
   guessedLocation?: Coordinates;
-	streetViewInfo?: StreetViewInfo;
+  streetViewInfo: StreetViewInfo;
+  isGuessCorrect?: boolean;
 }
 
 export interface UserData {
